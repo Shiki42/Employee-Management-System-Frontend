@@ -1,0 +1,45 @@
+/* .searchBarContainer {
+    background-color: black;
+    height: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .searchBar{
+
+  } */
+
+.headerStyle {
+display: flex;
+flex-direction: column;
+text-align: center;
+color: #fff;
+height: 64px;
+padding-inline: 50px;
+line-height: 64px;
+background-color: #121826;
+}
+
+.navbarContainer, .searchBarContainer {
+    width: 100%;
+    text-align: center;
+    line-height: 64px;
+  }
+
+.searchBarContainer {
+display: none; /* Hide search bar by default */
+}
+
+@media (max-width: 768px) {
+    .headerStyle {
+      height: 128px;
+    }
+  
+    .navbarContainer, .searchBarContainer {
+      height: 64px;
+    }
+  
+    .searchBarContainer {
+      display: block; /* Show search bar on mobile */
+    }
+  }
