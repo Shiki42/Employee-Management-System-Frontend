@@ -1,0 +1,17 @@
+.container{
+    max-width: 400px;
+    margin: 40px auto;
+}
+
+.title {
+    font-size: 20px;
+}
+
+.form {
+    margin-top: 5%;
+}
+
+.productFormContainer{
+    max-width: 600px;
+    margin: 40px auto;
+}

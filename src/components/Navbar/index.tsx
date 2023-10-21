@@ -4,10 +4,10 @@ import React, { useEffect, useState } from "react";
 import { useLocation, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Menu, Input, Space } from 'antd';
-import { MenuOutlined, UserOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import { MenuOutlined, UserOutlined} from '@ant-design/icons';
 import { logOutUser } from '../../app/userSlice';
 // import { useSearch } from '../../hooks/useSearchContext';
-
+import {RootState} from '../../app/store';
 import RightMenu from './RightMenu';
 import PropTypes from 'prop-types';
 const { Search } = Input;
@@ -15,12 +15,11 @@ import './style.css';
 
 const TITLE = 'Management';
 
-const onSearch = (value, _e, info) => console.log(info?.source, value);
+// const onSearch = (value, _e, info) => console.log(info?.source, value);
 
-const Navbar = ({handleCartModalOpen}) => {    
+const Navbar = () => {    
     // const { searchText, setSearchText } = useSearch();
-    const  totalPrice  = useSelector(state => state.cart.totalPrice);
-    const { user, isAuthenticated } = useSelector(state => state.user);
+    const user = useSelector((state:RootState) => state.user);
     const dispatch = useDispatch();
 
     // const handleSearchChange = (value) => {
@@ -40,11 +39,13 @@ const Navbar = ({handleCartModalOpen}) => {
             <Space style={{ fontSize: '16px' }}>
 
                 <div className="user-container">
-                    <RightMenu mode="horizontal" className="mobile-style" />
+                    <div className="mobile-style">
+                        <RightMenu  />
+                    </div>
                     <div>
                         <div className="mobile-no-display">
-                        {isAuthenticated ? (
-                            <div key="log-out" className="logout" onClick={() => dispatch(logOutUser())} >
+                        {user.isAuthenticated ? (
+                            <div key="log-out" className="logout" onClick={() => dispatch(logOutUser(null))} >
                                 Log out
                             </div>):(
                             <div key="sign-in">

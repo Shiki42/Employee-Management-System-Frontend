@@ -7,7 +7,7 @@ const { Header, Footer, Content } = Layout;
 import { Space } from 'antd';
 import { YoutubeOutlined, TwitterOutlined, FacebookOutlined } from '@ant-design/icons';
 
-
+import Navbar from '../Navbar';
 import {useState} from 'react';
 //import { SearchProvider } from '../../hooks/useSearchContext';
 //import Searchbar from '../Searchbar';
@@ -49,7 +49,7 @@ export default function MainLayout() {
         // {/* <Layout style={containerStyle}> */}
         <Layout>
             <Header className={styles.headerStyle}>
-                {/* <Navbar/> */}
+                <Navbar/>
                 {/* <Searchbar/> */}
             </Header>
             <Content style={contentStyle}>

@@ -5,14 +5,14 @@ import { UserOutlined, LogoutOutlined} from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logOutUser } from '../../app/userSlice';
-
-const RightMenu = ({ mode}) => {
+import { RootState } from '../../app/store';
+const RightMenu = () => {
   
-  const { user } = useSelector(state => state.user);
+  const  user  = useSelector((state:RootState) => state.user);
   const isAuthenticated = user?.isAuthenticated;
   const dispatch = useDispatch();
   return (
-    <Menu mode={mode} disabledOverflow={true} >
+    <Menu mode="horizontal" disabledOverflow={true} >
       
       <Menu.SubMenu
         title={
@@ -26,7 +26,7 @@ const RightMenu = ({ mode}) => {
       >
         {isAuthenticated ? (
           <>
-            <Menu.Item key="log-out" onClick={() => dispatch(logOutUser())}>
+            <Menu.Item key="log-out" onClick={() => dispatch(logOutUser(null))}>
               <LogoutOutlined /> Log out
             </Menu.Item>
           </>

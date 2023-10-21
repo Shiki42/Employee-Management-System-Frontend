@@ -6,6 +6,11 @@ import { Middleware } from "@reduxjs/toolkit";
 import { AnyAction, Dispatch } from "redux";
 import { configureStore, MiddlewareAPI } from "@reduxjs/toolkit";
 import userReducer from './userSlice'
+import { UserState } from "../interfaces/UserState.interface";
+export interface RootState {
+    user: UserState;
+    // Add other state slices here
+  }
 
 const loggerMiddleware: Middleware = (api: MiddlewareAPI<Dispatch<AnyAction>, any>) => (next: Dispatch<AnyAction>) => (action: AnyAction) => {
     console.log('Dispatching action:', action.type);
@@ -22,3 +27,5 @@ const store = configureStore({
 });
 
 export default store;
+
+export type AppDispatch = typeof store.dispatch;
