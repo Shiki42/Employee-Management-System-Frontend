@@ -31,9 +31,7 @@ display: none; /* Hide search bar by default */
 }
 
 @media (max-width: 768px) {
-    .headerStyle {
-      height: 128px;
-    }
+
   
     .navbarContainer, .searchBarContainer {
       height: 64px;

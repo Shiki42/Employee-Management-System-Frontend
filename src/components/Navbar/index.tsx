@@ -30,7 +30,7 @@ const Navbar = () => {
   }
   const menuForEmployee = (
     <Menu mode='horizontal'>
-      <Menu.Item onClick={() => navigate('/personal-info')}>
+      <Menu.Item onClick={() => navigate('/profile')}>
         Personal Information
       </Menu.Item>
       <Menu.Item onClick={() => navigate('/visa-status')}>

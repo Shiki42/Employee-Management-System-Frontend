@@ -31,7 +31,7 @@ const EditApplication: React.FC = () => {
             setIsLoading(false);
         }
         fetchApplication();
-    }, []);
+    }, [user]);
 
     useEffect(() => {
         form.setFieldsValue({...formData, DOB: null});
@@ -58,7 +58,7 @@ const EditApplication: React.FC = () => {
     }
 
     return (        
-        <ApplicationForm onFinish={onFinish} fields={defaultFields} form={form} />
+        <ApplicationForm onFinish={onFinish} fields={defaultFields} form={form}  />
     );
 };
 

@@ -6,7 +6,7 @@ import { Form, Input, Upload, Button, DatePicker, Radio, Select } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import styles from './applicationForm.module.css'; // Assuming you have a CSS module for styling
 
-interface Field {
+export interface Field {
   label: string;
   name: string[] | string;
   rules?: any[];
@@ -179,7 +179,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({ onFinish, formData, f
       name="applicationForm"
       onFinish={onFinish}
       layout="vertical"
-      initialValues={formData}
+      //initialValues={formData}
     >
       {fields.map((field, index) => (
         <Form.Item

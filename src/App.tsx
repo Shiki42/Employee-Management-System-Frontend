@@ -7,6 +7,7 @@ import MainLayout from './components/Layout';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import EditApplication from './pages/EditApplication';
+import ProfilePage from './pages/EmployeeProfile';
 import NotFound from './pages/NotFound';
 import LoginFirst from './pages/LoginFirst';
 import './App.css'
@@ -43,7 +44,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout/>}>
             <Route path="application" element={<EditApplication />} />
-            <Route path="profile" element={<EditApplication />} />
+            <Route path="profile" element={<ProfilePage />} />
             <Route path="visa-status" element={<EditApplication />} />
             <Route path="*" element={<NotFound />} />
           </Route>
@@ -65,7 +66,7 @@ function ConditionalNavigate() {
   useEffect(() => {
     if (user.isAuthenticated && user.role === 'employee') {
       if (user.applicationStatus !== 'approved') {
-        navigate('/application');
+        navigate('/profile');
       } else {
         navigate('/profile');
       }
