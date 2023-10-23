@@ -26,7 +26,7 @@ const Navbar = () => {
   const user = useSelector((state:RootState) => state.user);
   const handleLogout = () => { 
     dispatch(logOutUser(null));
-    navigate('/login');
+    navigate('/');
   }
   const menuForEmployee = (
     <Menu mode='horizontal'>

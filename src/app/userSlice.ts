@@ -12,7 +12,8 @@ const emptyState = () => {
         role: '',
         email: '',
         name: '',
-        onGoingApplication:null,
+        applicationId:null,
+        applicationStatus: null,
         } as  UserState);
 }
 const initialState = {
@@ -20,7 +21,8 @@ const initialState = {
     role: '',
     email: '',
     name: '',
-    onGoingApplication:null,
+    applicationId:null,
+    applicationStatus: null,
 } as UserState;
 
 //登录和查找当前ongoingApplication不是同步的，因为可以有多个ongoingApplication，登录只更新用户信息，不更新ongoingApplication
@@ -57,13 +59,20 @@ const currentUserSlice = createSlice({
     initialState,
     reducers: {
       setCurrentUser: (state, action) => {
-        const {name, email, role} = action.payload;
-        state = { ...state, name, email, role };
+        const {name, email, role, applicationId} = action.payload;
+        state.name = name;
+        state.email = email;
+        state.role = role;
         state.isAuthenticated = true;
+        state.applicationId = applicationId;
         localStorage.setItem('user', JSON.stringify(action.payload));
       },
       logOutUser: (state, action) => {
-        state = emptyState();
+        state.name = '';
+        state.email = '';
+        state.role = '';
+        state.isAuthenticated = false;
+        state.applicationId = null;
         //state.status = 'idle';
         localStorage.removeItem('user');
       }
@@ -79,7 +88,7 @@ const currentUserSlice = createSlice({
         
       });
       builder.addCase(authUser.rejected, (state, action) => {
-        state = emptyState();
+        logOutUser(state)
         //state.status = 'failed';
       });
       builder.addCase(authUser.pending, (state, action) => {
