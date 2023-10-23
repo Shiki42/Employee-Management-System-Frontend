@@ -2,7 +2,7 @@ import apiCall from './api';
 
 export const signUp = async (data:Record<string,unknown>) => {
   return await apiCall({
-    url: '/api/users/signup',
+    url: '/api/user/signup',
     method: 'POST',
     data,
   });
@@ -10,7 +10,7 @@ export const signUp = async (data:Record<string,unknown>) => {
 
 export const signIn = async (data:Record<string,unknown>) => {
   return await apiCall({
-    url: '/api/users/signin',
+    url: '/api/user/signin',
     method: 'POST',
     data
   });
@@ -18,7 +18,7 @@ export const signIn = async (data:Record<string,unknown>) => {
 
 export const invite = async (data:Record<string,unknown>) => {
     return await apiCall({
-      url: '/api/users/invite',
+      url: '/api/user/invite',
       method: 'POST',
       data
     });

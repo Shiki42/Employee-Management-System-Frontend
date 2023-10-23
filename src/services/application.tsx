@@ -9,11 +9,11 @@ export const getUserApplications = async (data: { userId: any; }) => {
     });
   };
 
-export const getApplication = async (data: { userId:any, applicationId:any }) => {
+export const getApplication = async (data: { applicationId:string }) => {
     return await apiCall({
-        url: `/api/user/${data.userId}/application/${data.applicationId}`,
+        url: `/api/application/${data.applicationId}`,
         method: 'GET',
-        data: {}
+        data:null
     });
 };
 
@@ -35,7 +35,7 @@ export const saveApplication = async (data: Record<string,unknown>) => {
 
 export const submitApplication = async (data: Record<string,unknown>) => {
     return await apiCall({
-        url: `/api/user/${data.userId}/application/${data.applicationId}`,
+        url: `/api/application`,
         method: 'POST',
         data
     });

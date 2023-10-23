@@ -26,7 +26,6 @@ import {useState} from 'react';
 // };
 
 const contentStyle = {
-    height: '100vh',
     margin: '24px 16px',
     minHeight: 120,
     padding:'0px'
@@ -70,7 +69,7 @@ export default function MainLayout() {
                     <span>Help</span>
                 </Space>
             </Footer>
-      </Layout>
+        </Layout>
 
     //   </SearchProvider>
     );

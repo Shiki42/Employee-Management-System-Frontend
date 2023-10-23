@@ -1,6 +1,6 @@
 const BASE_URL = 'http://localhost:3050';
 
-export default async function apiCall({ url: apiUrl, method, data }: { url: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE', data: Record<string, unknown> }) {
+export default async function apiCall({ url: apiUrl, method, data }: { url: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE', data: Record<string, unknown>|null }) {
   const url = new URL(apiUrl, BASE_URL).href;
 
 const user = JSON.parse(localStorage.getItem('user')|| '{}');
@@ -16,7 +16,7 @@ const response = await fetch(url, {
         ...defaultHeaders,
         //...headers
     },
-    body: JSON.stringify(data)
+    body: data?JSON.stringify(data):null
 });
   if (!response.ok) {
     

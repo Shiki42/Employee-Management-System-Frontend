@@ -1,72 +1,97 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import React, { useEffect, useState } from "react";
-import { useLocation, Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { Menu, Input, Space } from 'antd';
-import { MenuOutlined, UserOutlined} from '@ant-design/icons';
+import React from 'react';
+import {UserState} from '../../interfaces/UserState.interface'
+import { Link, useNavigate } from 'react-router-dom';
+import { useMediaQuery } from 'react-responsive';
+
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+
+import { Menu, Dropdown, Button } from 'antd';
+import { MenuOutlined } from '@ant-design/icons';
+
 import { logOutUser } from '../../app/userSlice';
-// import { useSearch } from '../../hooks/useSearchContext';
-import {RootState} from '../../app/store';
-import RightMenu from './RightMenu';
-import PropTypes from 'prop-types';
-const { Search } = Input;
-import './style.css';
+import { RootState } from '../../app/store';
+const navbarStyles = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between', // Align items to the left and right
+  };
 
-const TITLE = 'Management';
+const Navbar = () => {
+  const dispatch = useDispatch();
+  const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
+  const navigate = useNavigate();
+  const user = useSelector((state:RootState) => state.user);
+  const handleLogout = () => { 
+    dispatch(logOutUser(null));
+    navigate('/login');
+  }
+  const menuForEmployee = (
+    <Menu mode='horizontal'>
+      <Menu.Item onClick={() => navigate('/personal-info')}>
+        Personal Information
+      </Menu.Item>
+      <Menu.Item onClick={() => navigate('/visa-status')}>
+        Visa Status Management
+      </Menu.Item>
+      <Menu.Item onClick={() => {handleLogout()}}>
+        Logout
+      </Menu.Item>
+    </Menu>
+  );
 
-// const onSearch = (value, _e, info) => console.log(info?.source, value);
+  const menuForHR = (
+    <Menu mode='horizontal'>
+      <Menu.Item onClick={() => navigate('/home')}>
+        Home
+      </Menu.Item>
+      <Menu.Item onClick={() => navigate('/employee-profiles')}>
+        Employee Profiles
+      </Menu.Item>
+      <Menu.Item onClick={() => navigate('/visa-status')}>
+        Visa Status Management
+      </Menu.Item>
+      <Menu.Item onClick={() => navigate('/hiring-management')}>
+        Hiring Management
+      </Menu.Item>
+      <Menu.Item onClick={() => {handleLogout()}}>
+        Logout
+      </Menu.Item>
+    </Menu>
+  );
 
-const Navbar = () => {    
-    // const { searchText, setSearchText } = useSearch();
-    const user = useSelector((state:RootState) => state.user);
-    const dispatch = useDispatch();
+  if (!user.isAuthenticated) {
+    return(
+        <nav className="navbar" style={navbarStyles}>
+      <Link to="/" className="logo">
+        {/* Replace TITLE with your actual title */}
+        Management
+      </Link>
+      </nav>);
+  }
 
-    // const handleSearchChange = (value) => {
-    //     setSearchText(value);
-    //   };
+  const menu = user.role === 'employee' ? menuForEmployee : menuForHR;
 
-    return (
+  return (
+    <nav className="navbar" style={navbarStyles}>
+      <Link to="/" className="logo">
+        {/* Replace TITLE with your actual title */}
+        Management
+      </Link>
+      {isMobile ? (
+        <Dropdown overlay={menu} trigger={['click']}>
+          <Button shape="circle" icon={<MenuOutlined />} />
+        </Dropdown>
+      ) : (
         <>
-        <nav className="navbar">
-            <Link to="/" className="logo">
-            {TITLE}
-            </Link>
-            <div className="mobile-no-display searchbar">
-            {/* <Search placeholder="" onSearch={handleSearchChange} style={{ width: 200 }} /> */}
-            </div>
-
-            <Space style={{ fontSize: '16px' }}>
-
-                <div className="user-container">
-                    <div className="mobile-style">
-                        <RightMenu  />
-                    </div>
-                    <div>
-                        <div className="mobile-no-display">
-                        {user.isAuthenticated ? (
-                            <div key="log-out" className="logout" onClick={() => dispatch(logOutUser(null))} >
-                                Log out
-                            </div>):(
-                            <div key="sign-in">
-                                <Link to="signin">Log in</Link>
-                            </div> )}
-                        </div>
-                    </div>
-                </div>
-                {/* <div className="mobile-flex" onClick={handleCartModalOpen}>
-
-                    <ShoppingCartOutlined  />
-                    <span>${totalPrice.toFixed(2)}</span>
-                </div>   */}
-            </Space>
-
-        </nav>
-
-
+          {/* Render menu items directly */}
+          {menu}
         </>
-    );
-}
-
+      )}
+    </nav>
+  );
+};
 
 export default Navbar;

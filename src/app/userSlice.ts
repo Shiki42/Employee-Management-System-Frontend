@@ -71,10 +71,12 @@ const currentUserSlice = createSlice({
     extraReducers: builder => {
       builder.addCase(authUser.fulfilled, (state, action) => {        
         const {name, email, role} = action.payload;
-        state = { ...state, name, email, role };
+        state.name = name;
+        state.email = email;
+        state.role = role;
         state.isAuthenticated = true;
         localStorage.setItem('user', JSON.stringify(state));
-        //state.status = 'succeeded';
+        
       });
       builder.addCase(authUser.rejected, (state, action) => {
         state = emptyState();
