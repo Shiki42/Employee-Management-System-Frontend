@@ -12,10 +12,7 @@ import LoginFirst from './pages/LoginFirst';
 import './App.css'
 
 function App() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const user = useSelector((state:RootState) => state.user);
 
   useEffect(() => {
     const userString = localStorage.getItem('user');
@@ -27,7 +24,43 @@ function App() {
         console.error("Parsing error:", e);
       }
     }
-  }, [dispatch]); 
+  }, [dispatch]);
+
+  const user = useSelector((state: RootState) => state.user);
+
+  return (
+    <BrowserRouter>
+      <ConditionalNavigate />
+      {!user.isAuthenticated ? (
+        <Routes>
+          <Route path="/" element={<MainLayout/>}>
+            <Route index element={<SignIn />} />
+            <Route path="register" element={<SignUp />} />
+            <Route path="*" element={<LoginFirst />} />
+          </Route>
+        </Routes>
+      ) : user.role === 'employee' ? (
+        <Routes>
+          <Route path="/" element={<MainLayout/>}>
+            <Route path="application" element={<EditApplication />} />
+            <Route path="profile" element={<EditApplication />} />
+            <Route path="visa-status" element={<EditApplication />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      ) : (
+        user.role === 'HR' && (
+          // HR-specific routes here
+          <></>
+        )
+      )}
+    </BrowserRouter>
+  );
+}
+
+function ConditionalNavigate() {
+  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     if (user.isAuthenticated && user.role === 'employee') {
@@ -39,42 +72,7 @@ function App() {
     }
   }, [user, navigate]);
 
-  
-
-  if (!user.isAuthenticated) {
-    return (
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<MainLayout/>} >
-          <Route index element={<SignIn />} />
-          <Route path="register" element={<SignUp />} />
-          <Route path="*" element={<LoginFirst/>} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    )
-  }
-
-  if(user.role === 'employee') {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MainLayout/>} >
-          <Route path="application" element={<EditApplication />} />
-          <Route path="profile" element={<EditApplication />} />
-          <Route path="visa-status" element={<EditApplication />} />
-          <Route path="*" element={<NotFound/>} />
-          </Route>
-      </Routes>
-    </BrowserRouter>
-  )
-  }
-
-  if(user.role === 'HR') {
-    return (
-      <></>
-    )
-  }
+  return null;
 }
 
 export default App
