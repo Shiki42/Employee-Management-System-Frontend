@@ -9,9 +9,11 @@ import { RootState } from "../../app/store";
 
 interface Field {
     name: string;
-    placeholder: string;
+    placeholder?: string;
     rules: any[];
     type: string;
+    disabled?: boolean;
+    initialValue?: any;
 }
 
 interface AuthFormProps {
@@ -19,6 +21,7 @@ interface AuthFormProps {
     onSubmit: (any:any) => void;
     title: string;
     fields: Field[];
+    form?:any;
 }
 
 export default function AuthForm({
@@ -38,6 +41,7 @@ export default function AuthForm({
                     key={field.name}
                     name={field.name}
                     rules={field.rules}
+                    initialValue={field.initialValue}                    
                 >
                     {field.type === "password" ? (
                     <Input.Password
@@ -46,7 +50,7 @@ export default function AuthForm({
                         size='large'
                     />
                     ) : (
-                    <Input
+                    <Input disabled={field.disabled}
                         prefix={<UserOutlined />}
                         placeholder={field.placeholder}
                         size='large'

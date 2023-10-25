@@ -15,11 +15,13 @@ const EditApplication: React.FC = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const user = useSelector((state:any) => state.user);
-    
+
+    const [fileId, setFileId] = useState<any>(null);
     const [formData, setFormData] = useState<any>({});
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
+        form.setFieldsValue({ email: user.email});
         async function fetchApplication() {
             if (user.applicationId) {
                 setIsLoading(true);
@@ -39,7 +41,9 @@ const EditApplication: React.FC = () => {
 
     const onFinish = async (values: any) => {
             try {
-                    const response = await submitApplication(formData);
+                    values.profilePicture = fileId;
+                    console.log('values',values);
+                    const response = await submitApplication({...values,username:user.name});
                     navigate((location as any).state?.from || '/');
                     message.success(`Application successfully edited.`);
                 } catch (err) {
@@ -53,12 +57,12 @@ const EditApplication: React.FC = () => {
 
     if (!user.applicationId) {
         return (
-            <ApplicationForm onFinish={onFinish} fields={defaultFields} form={form} />
+            <ApplicationForm onFinish={onFinish} fields={defaultFields} form={form} setFileId={setFileId} />
         );
     }
 
     return (        
-        <ApplicationForm onFinish={onFinish} fields={defaultFields} form={form}  />
+        <ApplicationForm onFinish={onFinish} fields={defaultFields} form={form} setFileId={setFileId} />
     );
 };
 

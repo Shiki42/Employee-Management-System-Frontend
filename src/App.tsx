@@ -66,7 +66,7 @@ function ConditionalNavigate() {
   useEffect(() => {
     if (user.isAuthenticated && user.role === 'employee') {
       if (user.applicationStatus !== 'approved') {
-        navigate('/profile');
+        navigate('/application');
       } else {
         navigate('/profile');
       }
