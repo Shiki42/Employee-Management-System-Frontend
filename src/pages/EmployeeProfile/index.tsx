@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Form, FormInstance } from 'antd';
-import { ProfileForm } from '../../components/Form/profileForm';  // Make sure to import ProfileForm
-import { defaultFields, Field } from '../../components/Form/applicationForm';  // Your defaultFields array
+import { ProfileForm } from '../../components/Form/profileForm'; 
+import { Field } from '../../interfaces/FormField.interface';
+import { defaultFields } from '../../components/Form/profileFields';
 
 const ProfilePage: React.FC = () => {
     const [form] = Form.useForm<FormInstance>();

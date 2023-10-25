@@ -67,9 +67,10 @@ function ConditionalNavigate() {
     if (user.isAuthenticated && user.role === 'employee') {
       if (user.applicationStatus !== 'approved') {
         navigate('/application');
-      } else {
-        navigate('/profile');
       }
+      // } else {
+      //   navigate('/profile');
+      // }
     }
   }, [user, navigate]);
 

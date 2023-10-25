@@ -6,5 +6,5 @@ export interface UserState {
     email: string;
     name: string;
     applicationId: string | null;
-    applicationStatus: 'pending' | 'rejected' | 'approved' | null,
+    applicationStatus: "pending" | "rejected" | "approved" | null,
 }
