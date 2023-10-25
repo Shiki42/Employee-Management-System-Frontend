@@ -30,6 +30,7 @@ interface ApplicationFormProps {
   fields: Field[];
   form?:any;
   setFileId?:any;
+  disabled?: boolean;
 }
 
 
@@ -194,7 +195,7 @@ export const defaultFields: Field[] = [
 ];
 
 
-const ApplicationForm: React.FC<ApplicationFormProps> = ({ onFinish, formData, fields, form, setFileId }) => {
+const ApplicationForm: React.FC<ApplicationFormProps> = ({ onFinish, formData, fields, form, setFileId, disabled }) => {
   const user = useSelector((state:any) => state.user);
 
   const handleChange = async (info:any) => {
@@ -224,6 +225,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({ onFinish, formData, f
       name="applicationForm"
       onFinish={onFinish}
       layout="vertical"
+      disabled={disabled}
       //initialValues={formData}
     >
       {fields.map((field, index) => (

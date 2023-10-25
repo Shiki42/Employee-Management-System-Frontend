@@ -60,12 +60,21 @@ const currentUserSlice = createSlice({
     reducers: {
       setCurrentUser: (state, action) => {
         const {name, email, role, applicationId, applicationStatus} = action.payload;
-        state.name = name;
-        state.email = email;
-        state.role = role;
-        state.isAuthenticated = true;
-        state.applicationId = applicationId;
-        state.applicationStatus = applicationStatus;
+        if(name!=undefined){
+          state.name  = name;
+        }
+        if(email!=undefined){
+          state.email = email;
+        }
+        if(role!=undefined){
+          state.role = role;
+        }
+        if(applicationId!=undefined){
+          state.applicationId = applicationId;
+        }
+        if(applicationStatus!=undefined){
+          state.applicationStatus = applicationStatus;
+        }
         localStorage.setItem('user', JSON.stringify(action.payload));
       },
       logOutUser: (state, action) => {
