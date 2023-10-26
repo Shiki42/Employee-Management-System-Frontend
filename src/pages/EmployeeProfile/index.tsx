@@ -1,63 +1,64 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import moment from 'moment';
+import moment from "moment";
 
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React from "react";
+import { useEffect, useState } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 
-import { Form, FormInstance, message } from 'antd';
-import { ProfileForm } from '../../components/Form/profileForm'; 
-import { Field } from '../../interfaces/FormField.interface';
-import { nameFields,addressFields,contactFields,employmentFields,emergencyContactFields } from '../../components/Form/profileFields';
+import { Form, FormInstance, message } from "antd";
+import { ProfileForm } from "../../components/Form/profileForm"; 
+import { Field } from "../../interfaces/FormField.interface";
+import { nameFields,addressFields,contactFields,employmentFields,emergencyContactFields } from "../../components/Form/profileFields";
 
 import { getApplication,saveApplication } from "../../services/application";
 
 const ProfilePage: React.FC = () => {
-    const [form] = Form.useForm();
+  const [form] = Form.useForm();
 
-    const user = useSelector((state:any) => state.user);
-    const dispatch = useDispatch();
+  const user = useSelector((state:any) => state.user);
+  const dispatch = useDispatch();
 
-    const [fileId, setFileId] = useState<any>(null);
-    const [formData, setFormData] = useState<any>({});
-    const [isLoading, setIsLoading] = useState(false);
+  const [fileId, setFileId] = useState<any>(null);
+  const [formData, setFormData] = useState<any>({});
+  const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-      form.setFieldsValue({ email: user.email});
-      async function fetchApplication() {
-        if (user.applicationId) {
-          setIsLoading(true);
-          const response = await getApplication({ applicationId: user.applicationId });
-          if (response.application) {
-            setFormData(response.application);
-          }
+  useEffect(() => {
+    form.setFieldsValue({ email: user.email});
+    async function fetchApplication() {
+      if (user.applicationId) {
+        setIsLoading(true);
+        const response = await getApplication({ applicationId: user.applicationId });
+        if (response.application) {
+          setFormData(response.application);
         }
-        setIsLoading(false);
-  
       }
-      fetchApplication();
-    }, [user]);
+      setIsLoading(false);
   
-    useEffect(() => {
-      form.setFieldsValue({...formData, DOB: formData.DOB ? moment(formData.DOB) : null});
-    }, [formData]);
-  
-    const onFinish = async (values: any) => {
-      try {
-        //values.profilePicture = fileId;
-  
-        const response = await saveApplication({...values,username:user.name, applicationId: user.applicationId});
-  
-        message.success("Profile update edited.");
-      } catch (err) {
-        message.error("Error when updating profile");
-      }
-    };
-  
-    if (isLoading) {
-      return <div>Loading...</div>;
     }
+    fetchApplication();
+  }, [user]);
+  
+  useEffect(() => {
+    form.setFieldsValue({...formData, DOB: formData.DOB ? moment(formData.DOB) : null});
+  }, [formData]);
+  
+  const onFinish = async (values: any) => {
+    try {
+      //values.profilePicture = fileId;
+  
+      const response = await saveApplication({...values,username:user.name, applicationId: user.applicationId});
+  
+      message.success("Profile update edited.");
+    } catch (err) {
+      message.error("Error when updating profile");
+    }
+  };
+  
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Form

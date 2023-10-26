@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
-import { Form, Input, Upload, Button, DatePicker, Radio, Select, Modal, message } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
-import { useSelector } from 'react-redux';
-import { FormInstance } from 'antd/lib/form/Form';
-import { Field } from '../../interfaces/FormField.interface';
+import React, { useState } from "react";
+import { Form, Input, Upload, Button, DatePicker, Radio, Select, Modal, message } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import { useSelector } from "react-redux";
+import { FormInstance } from "antd/lib/form/Form";
+import { Field } from "../../interfaces/FormField.interface";
 
 interface ProfileFormProps {
   fields: Field[];
@@ -23,8 +23,8 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields,  sectionName, 
   const toggleEditing = () => {
     if (isEditing) {
       Modal.confirm({
-        title: 'Discard changes?',
-        content: 'Do you want to discard all of your changes?',
+        title: "Discard changes?",
+        content: "Do you want to discard all of your changes?",
         onOk: () => setIsEditing(false),
       });
     } else {
@@ -35,17 +35,17 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields,  sectionName, 
   const handleFileSubmit = async (info:any) => {
     const { status, response } = info.file;
 
-    if (status === 'uploading') {
+    if (status === "uploading") {
       // File is uploading
     }
-    if (status === 'done') {
+    if (status === "done") {
       if (response && response.documentId) {
         setFileId(response.documentId); 
         message.success(`${info.file.name} file uploaded successfully.`);
       } else {
         message.error(`${info.file.name} file upload failed.`);
       }
-    } else if (status === 'error') {
+    } else if (status === "error") {
       message.error(`${info.file.name} file upload failed.`);
     }
   };
@@ -54,7 +54,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields,  sectionName, 
     const fieldNames = fields.map(field => field.name);
 
     const values = form.getFieldsValue(fieldNames);
-    console.log('filterdvalues', values)
+    console.log("filterdvalues", values);
     onFinish(values);
     setIsEditing(false);
   };
@@ -71,21 +71,21 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields,  sectionName, 
           rules={field.rules}
           //initialValue={field.initialValue}
         >
-          {field.type === 'text' && <Input disabled={!isEditing} />}
-          {field.type === 'upload' && (
+          {field.type === "text" && <Input disabled={!isEditing} />}
+          {field.type === "upload" && (
             <Upload
-            action="http://localhost:3050/api/document"  // Your specific API endpoint
-            data={{
-              username: user.name // Additional data
-            }}
-            onChange={handleFileSubmit}
-            maxCount={1}
+              action="http://localhost:3050/api/document"  // Your specific API endpoint
+              data={{
+                username: user.name // Additional data
+              }}
+              onChange={handleFileSubmit}
+              maxCount={1}
             >
-            <Button icon={<UploadOutlined />}>Click to Upload</Button>
+              <Button icon={<UploadOutlined />}>Click to Upload</Button>
             </Upload>)}
-          {field.type === 'datePicker' && <DatePicker disabled={!isEditing} />}
-          {field.type === 'radio' && <Radio.Group options={field.options} disabled={!isEditing} />}
-          {field.type === 'select' && (
+          {field.type === "datePicker" && <DatePicker disabled={!isEditing} />}
+          {field.type === "radio" && <Radio.Group options={field.options} disabled={!isEditing} />}
+          {field.type === "select" && (
             <Select disabled={!isEditing}>
               {field.options?.map((option:any, i:any) => (
                 <Select.Option key={i} value={option.value}>

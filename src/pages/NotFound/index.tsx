@@ -1,6 +1,6 @@
-import { Result, Button } from 'antd';
-import { Link } from 'react-router-dom';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Result, Button } from "antd";
+import { Link } from "react-router-dom";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 export default function NotFound() {
   return (

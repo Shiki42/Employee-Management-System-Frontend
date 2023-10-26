@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import apiCall from './api';
+import apiCall from "./api";
 
 export const getUserApplications = async (data: { userId: any; }) => {
-    return await apiCall({
-      url: `/api/user/${data.userId}/applications`,
-      method: 'GET',
-      data: {}
-    });
-  };
+  return await apiCall({
+    url: `/api/user/${data.userId}/applications`,
+    method: "GET",
+    data: {}
+  });
+};
 
 export const getApplication = async (data: { applicationId:string }) => {
-    return await apiCall({
-        url: `/api/application/${data.applicationId}`,
-        method: 'GET',
-        data:null
-    });
+  return await apiCall({
+    url: `/api/application/${data.applicationId}`,
+    method: "GET",
+    data:null
+  });
 };
 
 // export const createApplication = async (data: { userId:any }) => {
@@ -26,18 +26,18 @@ export const getApplication = async (data: { applicationId:string }) => {
 // };
 
 export const saveApplication = async (data: Record<string,unknown>) => {
-    console.log(data)
-    return await apiCall({
-        url: `/api/application/${data.applicationId}`,
-        method: 'PUT',
-        data
-    });
+  console.log(data);
+  return await apiCall({
+    url: `/api/application/${data.applicationId}`,
+    method: "PUT",
+    data
+  });
 };
 
 export const submitApplication = async (data: Record<string,unknown>) => {
-    return await apiCall({
-        url: `/api/application`,
-        method: 'POST',
-        data
-    });
+  return await apiCall({
+    url: "/api/application",
+    method: "POST",
+    data
+  });
 };

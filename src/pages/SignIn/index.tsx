@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-extra-boolean-cast */
 
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../app/store';
-import AuthForm from '../../components/Form/authForm';
-import { authUser } from '../../app/userSlice';
-import { message } from 'antd';
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../app/store";
+import AuthForm from "../../components/Form/authForm";
+import { authUser } from "../../app/userSlice";
+import { message } from "antd";
 export default function SignIn() {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
@@ -14,30 +14,30 @@ export default function SignIn() {
 
   const fields = [
     {
-      placeholder: 'Name',
-      name: 'name',
-      type: 'text',
+      placeholder: "Name",
+      name: "name",
+      type: "text",
       rules: [
-        { required: true, message: 'Please input your Name!' },
+        { required: true, message: "Please input your Name!" },
       ]
     },
     {
-      placeholder: 'Password',
-      name: 'password',
-      type: 'password',
+      placeholder: "Password",
+      name: "password",
+      type: "password",
       rules: [
-        { required: true, message: 'Please input your Password!' },
+        { required: true, message: "Please input your Password!" },
         { 
           min: 6, 
-          message: 'Password must be at least 6 characters!',
+          message: "Password must be at least 6 characters!",
         },
         { 
           pattern: /[A-Za-z]/, 
-          message: 'Password must contain at least 1 letter!',
+          message: "Password must contain at least 1 letter!",
         },
         { 
           pattern: /[0-9]/, 
-          message: 'Password must contain at least 1 number!',
+          message: "Password must contain at least 1 number!",
         },
       ]
     }
@@ -50,7 +50,7 @@ export default function SignIn() {
     justifyContent: "space-between",
     flexWrap: "wrap",
     margin: "0 auto",
-  }
+  };
 
   const onSubmit = (data: Record<string, unknown>) => {
     dispatch(authUser(data))
@@ -60,13 +60,13 @@ export default function SignIn() {
           message.error( "Wrong name or password. Please try again.");
         } else {
           message.success("You have successfully logged in.");
-          if (response.payload.role === 'employee' && !(response.payload.applicationStatus === 'approved')) {
+          if (response.payload.role === "employee" && !(response.payload.applicationStatus === "approved")) {
             //navigate(location.state?.from || '/');
-            navigate('/application');
-          } else if ( response.payload.role === 'employee') {
-            navigate('/profile');
+            navigate("/application");
+          } else if ( response.payload.role === "employee") {
+            navigate("/profile");
           } else {
-            navigate('/dashboard');
+            navigate("/dashboard");
           }
         }
       })
@@ -89,7 +89,7 @@ export default function SignIn() {
             Dont have an account? <Link to="/signup">Sign up</Link>.
         </p>
         <p>
-            <Link to="/password">Forget password</Link>?
+          <Link to="/password">Forget password</Link>?
         </p>
       </div>
     </div>

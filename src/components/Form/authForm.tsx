@@ -25,50 +25,50 @@ interface AuthFormProps {
 }
 
 export default function AuthForm({
-    buttonText,
-    onSubmit,
-    title,
-    fields,
+  buttonText,
+  onSubmit,
+  title,
+  fields,
 }: AuthFormProps) {
-    // const user = useSelector((state:RootState) => state.user);
+  // const user = useSelector((state:RootState) => state.user);
 
-    return (
-        <div className={styles.container}>
-        <Typography className={styles.title}>{title}</Typography>
-        <Form onFinish={onSubmit} autoComplete="off" className={styles.form}>
-            {fields.map(field => (
-                <Form.Item
-                    key={field.name}
-                    name={field.name}
-                    rules={field.rules}
-                    initialValue={field.initialValue}                    
-                >
-                    {field.type === "password" ? (
-                    <Input.Password
-                        prefix={<LockOutlined />}
-                        placeholder={field.placeholder}
-                        size='large'
-                    />
-                    ) : (
-                    <Input disabled={field.disabled}
-                        prefix={<UserOutlined />}
-                        placeholder={field.placeholder}
-                        size='large'
-                    />
-                    )}                       
-                </Form.Item>
-            ))}
-            <Form.Item>
-                <Button
-                    type="primary"
-                    htmlType="submit"
-                    size="large"
-                    // loading={status === "loading"}
-                >
-                    {buttonText}
-                </Button>
-            </Form.Item>
-        </Form>
-        </div>
-    )
+  return (
+    <div className={styles.container}>
+      <Typography className={styles.title}>{title}</Typography>
+      <Form onFinish={onSubmit} autoComplete="off" className={styles.form}>
+        {fields.map(field => (
+          <Form.Item
+            key={field.name}
+            name={field.name}
+            rules={field.rules}
+            initialValue={field.initialValue}                    
+          >
+            {field.type === "password" ? (
+              <Input.Password
+                prefix={<LockOutlined />}
+                placeholder={field.placeholder}
+                size='large'
+              />
+            ) : (
+              <Input disabled={field.disabled}
+                prefix={<UserOutlined />}
+                placeholder={field.placeholder}
+                size='large'
+              />
+            )}                       
+          </Form.Item>
+        ))}
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            size="large"
+            // loading={status === "loading"}
+          >
+            {buttonText}
+          </Button>
+        </Form.Item>
+      </Form>
+    </div>
+  );
 }

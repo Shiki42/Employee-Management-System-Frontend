@@ -1,24 +1,24 @@
-import React from 'react';
-import { Tag } from 'antd';
+import React from "react";
+import { Tag } from "antd";
 
-type Status = 'approved' | 'pending' | 'rejected';
+type Status = "approved" | "pending" | "rejected";
 
 interface StatusTagProps {
   status: Status;
 }
 
 const StatusTag: React.FC<StatusTagProps> = ({ status }) => {
-  let color = '';
+  let color = "";
 
   switch (status) {
-    case 'approved':
-      color = 'green';
+    case "approved":
+      color = "green";
       break;
-    case 'pending':
-      color = 'gold';
+    case "pending":
+      color = "gold";
       break;
-    case 'rejected':
-      color = 'red';
+    case "rejected":
+      color = "red";
       break;
     default:
       break;

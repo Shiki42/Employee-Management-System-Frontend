@@ -1,22 +1,22 @@
-import { useSelector, useDispatch} from 'react-redux';
-import { RootState } from './app/store';
-import { setCurrentUser } from './app/userSlice';
-import { BrowserRouter, Routes, Route, useNavigate  } from 'react-router-dom';
-import { useEffect } from 'react';
-import MainLayout from './components/Layout';
-import SignIn from './pages/SignIn';
-import SignUp from './pages/SignUp';
-import EditApplication from './pages/EditApplication';
-import ProfilePage from './pages/EmployeeProfile';
-import NotFound from './pages/NotFound';
-import LoginFirst from './pages/LoginFirst';
-import './App.css'
+import { useSelector, useDispatch} from "react-redux";
+import { RootState } from "./app/store";
+import { setCurrentUser } from "./app/userSlice";
+import { BrowserRouter, Routes, Route, useNavigate  } from "react-router-dom";
+import { useEffect } from "react";
+import MainLayout from "./components/Layout";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
+import EditApplication from "./pages/EditApplication";
+import ProfilePage from "./pages/EmployeeProfile";
+import NotFound from "./pages/NotFound";
+import LoginFirst from "./pages/LoginFirst";
+import "./App.css";
 
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const userString = localStorage.getItem('user');
+    const userString = localStorage.getItem("user");
     if (userString) {
       try {
         const userData = JSON.parse(userString);
@@ -40,7 +40,7 @@ function App() {
             <Route path="*" element={<LoginFirst />} />
           </Route>
         </Routes>
-      ) : user.role === 'employee' ? (
+      ) : user.role === "employee" ? (
         <Routes>
           <Route path="/" element={<MainLayout/>}>
             <Route path="application" element={<EditApplication />} />
@@ -50,7 +50,7 @@ function App() {
           </Route>
         </Routes>
       ) : (
-        user.role === 'HR' && (
+        user.role === "HR" && (
           // HR-specific routes here
           <></>
         )
@@ -64,9 +64,9 @@ function ConditionalNavigate() {
   const user = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
-    if (user.isAuthenticated && user.role === 'employee') {
-      if (user.applicationStatus !== 'approved') {
-        navigate('/application');
+    if (user.isAuthenticated && user.role === "employee") {
+      if (user.applicationStatus !== "approved") {
+        navigate("/application");
       }
       // } else {
       //   navigate('/profile');
@@ -77,4 +77,4 @@ function ConditionalNavigate() {
   return null;
 }
 
-export default App
+export default App;
