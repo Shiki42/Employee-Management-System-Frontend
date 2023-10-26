@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import moment from "moment";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -45,7 +46,7 @@ const EditApplication: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    form.setFieldsValue({...formData, DOB: null});
+    form.setFieldsValue({...formData, DOB: formData.DOB ? moment(formData.DOB) : null});
   }, [formData]);
 
   const onFinish = async (values: any) => {

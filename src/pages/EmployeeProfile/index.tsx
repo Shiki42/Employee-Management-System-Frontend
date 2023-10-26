@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import moment from 'moment';
+
 import React from 'react';
 import { useEffect, useState } from 'react';
 
@@ -38,7 +40,7 @@ const ProfilePage: React.FC = () => {
     }, [user]);
   
     useEffect(() => {
-      form.setFieldsValue({...formData, DOB: null});
+      form.setFieldsValue({...formData, DOB: formData.DOB ? moment(formData.DOB) : null});
     }, [formData]);
   
     const onFinish = async (values: any) => {

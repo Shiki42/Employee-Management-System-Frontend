@@ -69,7 +69,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields,  sectionName, 
           label={field.label}
           name={field.name}
           rules={field.rules}
-          initialValue={field.initialValue}
+          //initialValue={field.initialValue}
         >
           {field.type === 'text' && <Input disabled={!isEditing} />}
           {field.type === 'upload' && (
