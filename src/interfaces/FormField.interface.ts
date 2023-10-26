@@ -7,5 +7,6 @@ export interface Field {
     options?: { label: string; value: string }[];
     initialValue?: any;
     disabled?: boolean;
+    fileHandler?:any;
   }
 

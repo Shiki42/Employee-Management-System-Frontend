@@ -21,7 +21,7 @@ const EditApplication: React.FC = () => {
   const dispatch = useDispatch();
   const user = useSelector((state:any) => state.user);
 
-  const [fileId, setFileId] = useState<any>(null);
+  const [filesId, setFilesId] = useState<any>({});
   const [formData, setFormData] = useState<any>({});
   const [isLoading, setIsLoading] = useState(false);
   const [formDisabled, setFormDisabled] = useState<boolean>(false);
@@ -51,8 +51,9 @@ const EditApplication: React.FC = () => {
 
   const onFinish = async (values: any) => {
     try {
-      values.profilePicture = fileId;
-
+      values.profilePicture = filesId.profilePicture;
+      values.driverLicense = filesId.driverLicense;
+      values.visaStatus.optReceipt.docId = filesId.optReceipt;
       const response = await submitApplication({...values,username:user.name});
 
       dispatch(setCurrentUser({ applicationId: response._id, applicationStatus: response.status}));
@@ -69,14 +70,14 @@ const EditApplication: React.FC = () => {
 
   if (!user.applicationId) {
     return (
-      <ApplicationForm onFinish={onFinish} fields={defaultFields} form={form} setFileId={setFileId}  />
+      <ApplicationForm onFinish={onFinish} fields={defaultFields} form={form} setFilesId={setFilesId}  />
     );
   }
 
   return (      
     <>
       {user.applicationStatus?<StatusTag status={user.applicationStatus} />:null}           
-      <ApplicationForm onFinish={onFinish} fields={defaultFields} form={form} setFileId={setFileId} disabled={formDisabled}/>
+      <ApplicationForm onFinish={onFinish} fields={defaultFields} form={form} setFilesId={setFilesId} disabled={formDisabled}/>
     </> 
   );
 };

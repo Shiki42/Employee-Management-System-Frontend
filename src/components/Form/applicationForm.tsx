@@ -16,11 +16,11 @@ interface ApplicationFormProps {
   formData?: any;
   fields: Field[];
   form?:any;
-  setFileId?:any;
+  setFilesId?:any;
   disabled?: boolean;
 }
 
-const ApplicationForm: React.FC<ApplicationFormProps> = ({ onFinish, formData, fields, form, setFileId, disabled }) => {
+const ApplicationForm: React.FC<ApplicationFormProps> = ({ onFinish, formData, fields, form, setFilesId, disabled }) => {
   const user = useSelector((state:any) => state.user);
 
   const handleFileSubmit = async (info:any) => {
@@ -30,15 +30,17 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({ onFinish, formData, f
       // File is uploading
     }
     if (status === "done") {
-      // File uploaded successfully
-      if (response && response.documentId) {
-        setFileId(response.documentId); // Update fileId state
+
+      if (response && response.documentId && response.name) {
+        const field = response.name;
+        setFilesId((prev:any) => {
+          return { ...prev, [field]: response.documentId };
+        });
         message.success(`${info.file.name} file uploaded successfully.`);
       } else {
         message.error(`${info.file.name} file upload failed.`);
       }
     } else if (status === "error") {
-      // File upload failed
       message.error(`${info.file.name} file upload failed.`);
     }
   };
@@ -63,9 +65,10 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({ onFinish, formData, f
           {field.type === "text" && <Input disabled={field.disabled} />}
           {field.type === "upload" && (
             <Upload
-              action="http://localhost:3050/api/document"  // Your specific API endpoint
+              action="http://localhost:3050/api/document"  
               data={{
-                username: user.name // Additional data
+                username: user.name,
+                name: field.name
               }}
               onChange={handleFileSubmit}
               maxCount={1}

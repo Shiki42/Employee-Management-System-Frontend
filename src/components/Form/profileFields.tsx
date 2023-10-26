@@ -209,6 +209,13 @@ export const emergencyContactFields: Field[] = [
   }
 ];
 
+export const docSummaryFields: Field[] = [
+  {
+    label: "Profile Picture",
+    name: "profilePicture",
+    type: "upload",
+  },
+];
 export const defaultFields: Field[] = [
   ...nameFields,
   ...addressFields,
