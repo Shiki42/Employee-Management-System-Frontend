@@ -26,8 +26,9 @@ export const getApplication = async (data: { applicationId:string }) => {
 // };
 
 export const saveApplication = async (data: Record<string,unknown>) => {
+    console.log(data)
     return await apiCall({
-        url: `/api/user/${data.userId}/application/${data.applicationId}`,
+        url: `/api/application/${data.applicationId}`,
         method: 'PUT',
         data
     });

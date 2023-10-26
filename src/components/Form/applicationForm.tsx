@@ -23,13 +23,12 @@ interface ApplicationFormProps {
 const ApplicationForm: React.FC<ApplicationFormProps> = ({ onFinish, formData, fields, form, setFileId, disabled }) => {
   const user = useSelector((state:any) => state.user);
 
-  const handleChange = async (info:any) => {
+  const handleFileSubmit = async (info:any) => {
     const { status, response } = info.file;
 
     if (status === 'uploading') {
       // File is uploading
     }
-
     if (status === 'done') {
       // File uploaded successfully
       if (response && response.documentId) {
@@ -68,7 +67,7 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({ onFinish, formData, f
             data={{
               username: user.name // Additional data
             }}
-            onChange={handleChange}
+            onChange={handleFileSubmit}
             maxCount={1}
             >
             <Button icon={<UploadOutlined />}>Click to Upload</Button>

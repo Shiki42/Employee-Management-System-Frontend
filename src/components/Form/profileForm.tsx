@@ -1,26 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
-import { Form, Input, Upload, Button, DatePicker, Radio, Select, Modal } from 'antd';
+import { Form, Input, Upload, Button, DatePicker, Radio, Select, Modal, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
 import { FormInstance } from 'antd/lib/form/Form';
-
-interface Field {
-  name: string | string[];
-  label: string;
-  rules?: any;
-  type: string;
-  initialValue?: any;
-  options?: { label: string; value: string }[];
-}
+import { Field } from '../../interfaces/FormField.interface';
 
 interface ProfileFormProps {
   fields: Field[];
-  form: FormInstance;
   sectionName: string;
+  onFinish: (values: any) => void;
+  setFileId?: any;
+  form:any;
 }
-export const ProfileForm: React.FC<ProfileFormProps> = ({ fields, form, sectionName }) => {
+
+export const ProfileForm: React.FC<ProfileFormProps> = ({ fields,  sectionName, onFinish, setFileId, form }) => {
+
   const [isEditing, setIsEditing] = useState(false);
+  const user = useSelector((state:any) => state.user);
 
   const toggleEditing = () => {
     if (isEditing) {
@@ -34,20 +32,37 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields, form, sectionN
     }
   };
 
+  const handleFileSubmit = async (info:any) => {
+    const { status, response } = info.file;
+
+    if (status === 'uploading') {
+      // File is uploading
+    }
+    if (status === 'done') {
+      if (response && response.documentId) {
+        setFileId(response.documentId); 
+        message.success(`${info.file.name} file uploaded successfully.`);
+      } else {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    } else if (status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  };
+
   const saveChanges = () => {
-    // Save logic here
+    const fieldNames = fields.map(field => field.name);
+
+    const values = form.getFieldsValue(fieldNames);
+    console.log('filterdvalues', values)
+    onFinish(values);
     setIsEditing(false);
   };
 
   return (
     <div className="profile-section">
       <h2>{sectionName}</h2>
-      {isEditing ? (
-        <Button onClick={toggleEditing}>Cancel</Button>
-      ) : (
-        <Button onClick={toggleEditing}>Edit</Button>
-      )}
-      {isEditing && <Button onClick={saveChanges}>Save</Button>}
+
       {fields.map((field, index) => (
         <Form.Item
           key={index}
@@ -57,7 +72,17 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields, form, sectionN
           initialValue={field.initialValue}
         >
           {field.type === 'text' && <Input disabled={!isEditing} />}
-          {field.type === 'upload' && <Upload><Button icon={<UploadOutlined />}>Upload</Button></Upload>}
+          {field.type === 'upload' && (
+            <Upload
+            action="http://localhost:3050/api/document"  // Your specific API endpoint
+            data={{
+              username: user.name // Additional data
+            }}
+            onChange={handleFileSubmit}
+            maxCount={1}
+            >
+            <Button icon={<UploadOutlined />}>Click to Upload</Button>
+            </Upload>)}
           {field.type === 'datePicker' && <DatePicker disabled={!isEditing} />}
           {field.type === 'radio' && <Radio.Group options={field.options} disabled={!isEditing} />}
           {field.type === 'select' && (
@@ -71,6 +96,12 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields, form, sectionN
           )}
         </Form.Item>
       ))}
+      {isEditing ? (
+        <Button onClick={toggleEditing}>Cancel</Button>
+      ) : (
+        <Button onClick={toggleEditing}>Edit</Button>
+      )}
+      {isEditing && <Button htmlType="submit" onClick={saveChanges}>Save</Button>}
     </div>
   );
 };
