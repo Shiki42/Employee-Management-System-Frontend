@@ -67,7 +67,7 @@ const ProfilePage: React.FC = () => {
       onFinish={onFinish}
       layout="vertical"
     >
-      <ProfileForm fields={nameFields} onFinish={onFinish} form={form} setFileId={setFileId} sectionName="Name" />
+      <ProfileForm fields={nameFields} onFinish={onFinish} form={form} setFilesId={setFileId} sectionName="Name" />
       <ProfileForm fields={addressFields}  onFinish={onFinish} form={form} sectionName="Address" />
       <ProfileForm fields={contactFields}  onFinish={onFinish} form={form} sectionName="Contact Info" />
       <ProfileForm fields={employmentFields}  onFinish={onFinish} form={form} sectionName="Employment" />

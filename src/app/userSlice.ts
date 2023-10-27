@@ -59,10 +59,9 @@ const currentUserSlice = createSlice({
   initialState,
   reducers: {
     setCurrentUser: (state, action) => {
-      const {name, email, role, applicationId, applicationStatus, isAuthenticated} = action.payload;
-      if(isAuthenticated!=undefined) {
-        state.isAuthenticated = isAuthenticated;
-      }
+      const {name, email, role, applicationId, applicationStatus,  token} = action.payload;
+      state.isAuthenticated = true;
+
       if(name!=undefined) {
         state.name  = name;
       }
@@ -78,6 +77,9 @@ const currentUserSlice = createSlice({
       if(applicationStatus!=undefined) {
         state.applicationStatus = applicationStatus;
       }
+      if(token!=undefined) {
+        localStorage.setItem("token", token);
+      }
       localStorage.setItem("user", JSON.stringify(action.payload));
     },
     logOutUser: (state, action) => {
@@ -92,13 +94,14 @@ const currentUserSlice = createSlice({
   },
   extraReducers: builder => {
     builder.addCase(authUser.fulfilled, (state, action) => {        
-      const {name, email, role, applicationId, applicationStatus} = action.payload;
+      const {name, email, role, applicationId, applicationStatus, token} = action.payload;
       state.name = name;
       state.email = email;
       state.role = role;
       state.isAuthenticated = true;
       state.applicationId = applicationId;
       state.applicationStatus = applicationStatus;
+      state.token = token;
       localStorage.setItem("user", JSON.stringify(state));
         
     });

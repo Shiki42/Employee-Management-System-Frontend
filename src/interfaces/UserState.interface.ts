@@ -7,4 +7,5 @@ export interface UserState {
     name: string;
     applicationId: string | null;
     applicationStatus: "pending" | "rejected" | "approved" | null,
+    token: string;
 }

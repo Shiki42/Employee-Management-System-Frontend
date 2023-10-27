@@ -7,12 +7,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../../app/userSlice";
 
-import { Form, Input, Button, Select, Upload, DatePicker, Radio, message } from "antd";
+import { Form, Input, Button, Select, Upload, DatePicker, Radio, Space,message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { nameFields,addressFields,contactFields,employmentFields,emergencyContactFields } from "../../components/Form/profileFields";
+import { ProfileForm } from "../../components/Form/profileForm"; 
 import { getApplication,submitApplication } from "../../services/application";
-import ApplicationForm from "../../components/Form/applicationForm";
-import { defaultFields } from "../../components/Form/profileFields";
 import StatusTag from "../../components/StatusTag";
 
 const EditApplication: React.FC = () => {
@@ -68,16 +68,67 @@ const EditApplication: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  if (!user.applicationId) {
-    return (
-      <ApplicationForm onFinish={onFinish} fields={defaultFields} form={form} setFilesId={setFilesId}  />
-    );
-  }
-
   return (      
     <>
       {user.applicationStatus?<StatusTag status={user.applicationStatus} />:null}           
-      <ApplicationForm onFinish={onFinish} fields={defaultFields} form={form} setFilesId={setFilesId} disabled={formDisabled}/>
+      <Form
+        form={form}
+        name="profilePage"
+        onFinish={onFinish}
+        layout="vertical"
+        disabled={formDisabled}
+      >
+        <ProfileForm fields={nameFields} onFinish={onFinish} form={form} setFilesId={setFilesId} sectionName="Name" />
+        <ProfileForm fields={addressFields}  onFinish={onFinish} form={form} sectionName="Address" />
+        <ProfileForm fields={contactFields}  onFinish={onFinish} form={form} sectionName="Contact Info" />
+        <ProfileForm fields={employmentFields}  onFinish={onFinish} form={form} sectionName="Employment" />
+        {/* <ProfileForm fields={emergencyContactFields}  onFinish={onFinish} form={form} sectionName="Emergency Contact" /> */}
+        {/* <ProfileForm fields={groupFieldsBySection('documents')} form={form} sectionName="Documents" /> */}
+
+        <Form.List name="emergencyContacts">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name, fieldKey, ...restField }) => (
+                <Space key={key} style={{ display: "flex", marginBottom: 8 }} align="baseline">
+                  <Form.Item
+                    {...restField}
+                    name={[name, "name","firstName"]}
+                    fieldKey={fieldKey ? [fieldKey.toString(), "firstName"] : undefined}
+                    rules={[{ required: true, message: "Missing first name" }]}
+                  >
+                    <Input placeholder="First Name" />
+                  </Form.Item>
+                  <Form.Item
+                    {...restField}
+                    name={[name,"name", "lastName"]}
+                    fieldKey={fieldKey ? [fieldKey.toString(), "lastName"] : undefined}
+                    rules={[{ required: true, message: "Missing last name" }]}
+                  >
+                    <Input placeholder="Last Name" />
+                  </Form.Item>
+                  <Form.Item
+                    {...restField}
+                    name={[name, "relationship"]}
+                    fieldKey={fieldKey ? [fieldKey.toString(), "relationship"] : undefined}
+                    rules={[{ required: true, message: "Missing relationship" }]}
+                  >
+                    <Input placeholder="Relationship" />
+                  </Form.Item>
+                  <MinusCircleOutlined onClick={() => remove(name)} />
+                </Space>
+              ))}
+              <Form.Item>
+                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                Add Emergency Contact
+                </Button>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
+        <Form.Item>
+          <button type="submit">Save All</button>
+        </Form.Item>
+      </Form>
     </> 
   );
 };

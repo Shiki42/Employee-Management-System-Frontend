@@ -1,8 +1,11 @@
 import { useSelector, useDispatch} from "react-redux";
 import { RootState } from "./app/store";
 import { setCurrentUser } from "./app/userSlice";
+
+import { getStatus } from "./services/auth";
 import { BrowserRouter, Routes, Route, useNavigate  } from "react-router-dom";
 import { useEffect } from "react";
+
 import MainLayout from "./components/Layout";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -16,22 +19,32 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const userString = localStorage.getItem("user");
-    if (userString) {
-      try {
-        const userData = JSON.parse(userString);
-        dispatch(setCurrentUser(userData));
-      } catch (e) {
-        console.error("Parsing error:", e);
+    async function fetchStatus() {
+      const userString = localStorage.getItem("user");
+      
+      if (userString) {
+        try {
+          const userData = JSON.parse(userString);
+          const userStatus = await getStatus({token:userData.token});
+          if (userStatus.applicationStatus) {
+            userData.applicationStatus = userStatus.applicationStatus;
+          }
+          dispatch(setCurrentUser(userData));
+        } catch (e) {
+          console.error("Parsing error:", e);
+          const userData = JSON.parse(userString);
+          dispatch(setCurrentUser(userData));
+        }
       }
     }
+    fetchStatus();
   }, [dispatch]);
 
   const user = useSelector((state: RootState) => state.user);
 
   return (
     <BrowserRouter>
-      <ConditionalNavigate />
+      
       {!user.isAuthenticated ? (
         <Routes>
           <Route path="/" element={<MainLayout/>}>
@@ -43,6 +56,7 @@ function App() {
       ) : user.role === "employee" ? (
         <Routes>
           <Route path="/" element={<MainLayout/>}>
+            <Route index element={<ProfilePage />} />
             <Route path="application" element={<EditApplication />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="visa-status" element={<EditApplication />} />
@@ -55,6 +69,7 @@ function App() {
           <></>
         )
       )}
+      <ConditionalNavigate />
     </BrowserRouter>
   );
 }

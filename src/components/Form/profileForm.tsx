@@ -11,14 +11,15 @@ interface ProfileFormProps {
   fields: Field[];
   sectionName: string;
   onFinish: (values: any) => void;
-  setFileId?: any;
+  setFilesId?:any;
   form:any;
+  formData?: any;
+  sectionButtons?: boolean;
 }
 
-export const ProfileForm: React.FC<ProfileFormProps> = ({ fields,  sectionName, onFinish, setFileId, form }) => {
-
+export const ProfileForm: React.FC<ProfileFormProps> = ({ fields, sectionName, onFinish, setFilesId, form, sectionButtons}) => {
   const [isEditing, setIsEditing] = useState(false);
-  const user = useSelector((state:any) => state.user);
+  const user = useSelector((state: any) => state.user);
 
   const toggleEditing = () => {
     if (isEditing) {
@@ -32,15 +33,18 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields,  sectionName, 
     }
   };
 
-  const handleFileSubmit = async (info:any) => {
+  const handleFileSubmit = async (info: any) => {
     const { status, response } = info.file;
 
     if (status === "uploading") {
       // File is uploading
     }
     if (status === "done") {
-      if (response && response.documentId) {
-        setFileId(response.documentId); 
+      if (response && response.documentId && response.name) {
+        const field = response.name;
+        setFilesId((prev: any) => {
+          return { ...prev, [field]: response.documentId };
+        });
         message.success(`${info.file.name} file uploaded successfully.`);
       } else {
         message.error(`${info.file.name} file upload failed.`);
@@ -51,7 +55,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields,  sectionName, 
   };
 
   const saveChanges = () => {
-    const fieldNames = fields.map(field => field.name);
+    const fieldNames = fields.map((field) => field.name);
 
     const values = form.getFieldsValue(fieldNames);
     console.log("filterdvalues", values);
@@ -69,25 +73,28 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields,  sectionName, 
           label={field.label}
           name={field.name}
           rules={field.rules}
-          //initialValue={field.initialValue}
+          // initialValue={field.initialValue}
         >
-          {field.type === "text" && <Input disabled={!isEditing} />}
+          {field.type === "text" && <Input disabled={sectionButtons} />}
           {field.type === "upload" && (
             <Upload
-              action="http://localhost:3050/api/document"  // Your specific API endpoint
+              action="http://localhost:3050/api/document"
               data={{
-                username: user.name // Additional data
+                username: user.name,
+                name: field.name,
               }}
               onChange={handleFileSubmit}
               maxCount={1}
+              disabled={sectionButtons}
             >
               <Button icon={<UploadOutlined />}>Click to Upload</Button>
-            </Upload>)}
-          {field.type === "datePicker" && <DatePicker disabled={!isEditing} />}
-          {field.type === "radio" && <Radio.Group options={field.options} disabled={!isEditing} />}
+            </Upload>
+          )}
+          {field.type === "datePicker" && <DatePicker disabled={sectionButtons} />}
+          {field.type === "radio" && <Radio.Group options={field.options} disabled={sectionButtons} />}
           {field.type === "select" && (
-            <Select disabled={!isEditing}>
-              {field.options?.map((option:any, i:any) => (
+            <Select disabled={sectionButtons}>
+              {field.options?.map((option: any, i: any) => (
                 <Select.Option key={i} value={option.value}>
                   {option.label}
                 </Select.Option>
@@ -96,12 +103,16 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields,  sectionName, 
           )}
         </Form.Item>
       ))}
-      {isEditing ? (
-        <Button onClick={toggleEditing}>Cancel</Button>
-      ) : (
-        <Button onClick={toggleEditing}>Edit</Button>
+      {sectionButtons && (
+        <>
+          {isEditing ? (
+            <Button onClick={toggleEditing}>Cancel</Button>
+          ) : (
+            <Button onClick={toggleEditing}>Edit</Button>
+          )}
+          {isEditing && <Button htmlType="submit" onClick={saveChanges}>Save</Button>}
+        </>
       )}
-      {isEditing && <Button htmlType="submit" onClick={saveChanges}>Save</Button>}
     </div>
   );
 };

@@ -23,3 +23,12 @@ export const invite = async (data:Record<string,unknown>) => {
     data
   });
 };
+
+
+export const getStatus = async (data:Record<string,unknown>) => {
+  return await apiCall({
+    url: "/api/user/status",
+    method: "POST",
+    data
+  });
+};
