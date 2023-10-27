@@ -81,7 +81,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields, sectionName, o
               action="http://localhost:3050/api/document"
               data={{
                 username: user.name,
-                name: field.name,
+                type: field.name,
               }}
               onChange={handleFileSubmit}
               maxCount={1}

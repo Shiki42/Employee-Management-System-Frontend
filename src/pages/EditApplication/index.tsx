@@ -10,7 +10,7 @@ import { setCurrentUser } from "../../app/userSlice";
 import { Form, Input, Button, Select, Upload, DatePicker, Radio, Space,message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { nameFields,addressFields,contactFields,employmentFields,emergencyContactFields } from "../../components/Form/profileFields";
+import { nameFields,addressFields,contactFields,referrerFields, employmentFields,emergencyContactFields } from "../../components/Form/profileFields";
 import { ProfileForm } from "../../components/Form/profileForm"; 
 import { getApplication,submitApplication } from "../../services/application";
 import StatusTag from "../../components/StatusTag";
@@ -33,8 +33,9 @@ const EditApplication: React.FC = () => {
     setCitizenshipStatus(e.target.value);
   };
 
-  const onVisaStatusChange = (e: any) => {
-    setvisaStatus(e.target.value);
+  const onVisaStatusChange = (value:string) => {
+    console.log(value);
+    setvisaStatus(value);
   };
 
   useEffect(() => {
@@ -57,8 +58,13 @@ const EditApplication: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    form.setFieldsValue({...formData, DOB: formData.DOB ? moment(formData.DOB) : null});
-  }, [formData]);
+    console.log("formData",formData);
+    if(formData.workAuth) {
+      formData.workAuth.StartDate = formData.workAuth.StartDate ? moment(formData.workAuth.StartDate) : null;
+      formData.workAuth.EndDate = formData.workAuth.EndDate ? moment(formData.workAuth.EndDate) : null;
+    }
+    form.setFieldsValue({...formData, DOB: formData.DOB ? moment(formData.DOB) : null,});
+  }, [formData,citizenshipStatus,visaStatus]);
 
   const onFinish = async (values: any) => {
     try {
@@ -86,7 +92,7 @@ const EditApplication: React.FC = () => {
       // File is uploading
     }
     if (status === "done") {
-      if (response && response.documentId && response.name) {
+      if (response && response.documentId) {
         // const field = response.name;
         // setFilesId((prev: any) => {
         //   return { ...prev, [field]: response.documentId };
@@ -130,7 +136,7 @@ const EditApplication: React.FC = () => {
             {/* Visa Type */}
             <Form.Item
               label="Visa Type"
-              name={["workAuth"]}
+              name={["workAuth", "type"]}
               rules={[{ required: true, message: "Please select your work authorization!" }]}
             >
               <Select onChange={onVisaStatusChange}>
@@ -145,7 +151,7 @@ const EditApplication: React.FC = () => {
             {/* workAuth Start Date */}
             <Form.Item
               label="workAuth Start Date"
-              name={["workAuth", "workAuthStartDate"]}
+              name={["workAuth", "StartDate"]}
               rules={[{ required: true, message: "Please select your workAuth Start Date!" }]}
             >
               <DatePicker />
@@ -154,20 +160,21 @@ const EditApplication: React.FC = () => {
             {/* workAuth End Date */}
             <Form.Item
               label="workAuth End Date"
-              name={["workAuth", "workAuthEndDate"]}
+              name={["workAuth", "EndDate"]}
               rules={[{ required: true, message: "Please select your workAuth End Date!" }]}
             >
               <DatePicker />
             </Form.Item>
         
             {visaStatus === "F1(CPT/OPT)" && ( <Form.Item
-              label="Other Visa Type"
+              label="optReceipt"
               name={["visaStatus", "optReceipt"]}
+              rules={[{ required: true, message: "Please upload your optReceipt!" }]}
             ><Upload
                 action="http://localhost:3050/api/document"
                 data={{
                   username: user.name,
-                  name: "optReceipt",
+                  type: "optReceipt",
                 }}
                 onChange={handleFileSubmit}
                 maxCount={1}
@@ -178,7 +185,7 @@ const EditApplication: React.FC = () => {
 
             {visaStatus === "Other" && ( <Form.Item
               label="Other Visa Type"
-              name={["workAuth", "workAuthOther"]}
+              name={["workAuth", "Other"]}
             >
               <Input />
             </Form.Item> )}
@@ -187,6 +194,7 @@ const EditApplication: React.FC = () => {
         {/* <ProfileForm fields={emergencyContactFields}  onFinish={onFinish} form={form} sectionName="Emergency Contact" /> */}
         {/* <ProfileForm fields={groupFieldsBySection('documents')} form={form} sectionName="Documents" /> */}
 
+        <ProfileForm fields={referrerFields}  onFinish={onFinish} form={form} sectionName="Referrer" />
         <Form.List name="emergencyContacts">
           {(fields, { add, remove }) => (
             <>

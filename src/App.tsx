@@ -20,16 +20,20 @@ function App() {
 
   useEffect(() => {
     async function fetchStatus() {
+      localStorage.removeItem("user");
       const userString = localStorage.getItem("user");
       
       if (userString) {
         try {
           const userData = JSON.parse(userString);
-          const userStatus = await getStatus({token:userData.token});
-          if (userStatus.applicationStatus) {
-            userData.applicationStatus = userStatus.applicationStatus;
+          if(userData.token) {
+            const userStatus = await getStatus({token:userData.token});
+            if (userStatus.applicationStatus) {
+              userData.applicationStatus = userStatus.applicationStatus;
+            }
           }
           dispatch(setCurrentUser(userData));
+
         } catch (e) {
           console.error("Parsing error:", e);
           const userData = JSON.parse(userString);
