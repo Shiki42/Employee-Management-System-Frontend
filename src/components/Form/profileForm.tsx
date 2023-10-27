@@ -11,13 +11,13 @@ interface ProfileFormProps {
   fields: Field[];
   sectionName: string;
   onFinish: (values: any) => void;
-  setFilesId?:any;
+  // setFilesId?:any;
   form:any;
   formData?: any;
   sectionButtons?: boolean;
 }
 
-export const ProfileForm: React.FC<ProfileFormProps> = ({ fields, sectionName, onFinish, setFilesId, form, sectionButtons}) => {
+export const ProfileForm: React.FC<ProfileFormProps> = ({ fields, sectionName, onFinish,  form, sectionButtons}) => {
   const [isEditing, setIsEditing] = useState(false);
   const user = useSelector((state: any) => state.user);
 
@@ -42,9 +42,9 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields, sectionName, o
     if (status === "done") {
       if (response && response.documentId && response.name) {
         const field = response.name;
-        setFilesId((prev: any) => {
-          return { ...prev, [field]: response.documentId };
-        });
+        // setFilesId((prev: any) => {
+        //   return { ...prev, [field]: response.documentId };
+        // });
         message.success(`${info.file.name} file uploaded successfully.`);
       } else {
         message.error(`${info.file.name} file upload failed.`);

@@ -21,10 +21,21 @@ const EditApplication: React.FC = () => {
   const dispatch = useDispatch();
   const user = useSelector((state:any) => state.user);
 
-  const [filesId, setFilesId] = useState<any>({});
+  // const [filesId, setFilesId] = useState<any>({});
   const [formData, setFormData] = useState<any>({});
   const [isLoading, setIsLoading] = useState(false);
   const [formDisabled, setFormDisabled] = useState<boolean>(false);
+
+  const [citizenshipStatus, setCitizenshipStatus] = useState<string | null>(null);
+  const [visaStatus, setvisaStatus] = useState<string | null>(null);
+
+  const onCitizenshipStatusChange = (e: any) => {
+    setCitizenshipStatus(e.target.value);
+  };
+
+  const onVisaStatusChange = (e: any) => {
+    setvisaStatus(e.target.value);
+  };
 
   useEffect(() => {
     form.setFieldsValue({ email: user.email});
@@ -51,9 +62,9 @@ const EditApplication: React.FC = () => {
 
   const onFinish = async (values: any) => {
     try {
-      values.profilePicture = filesId.profilePicture;
-      values.driverLicense = filesId.driverLicense;
-      values.visaStatus.optReceipt.docId = filesId.optReceipt;
+      // values.profilePicture = filesId.profilePicture;
+      // values.driverLicense = filesId.driverLicense;
+      // values.visaStatus.optReceipt.docId = filesId.optReceipt;
       const response = await submitApplication({...values,username:user.name});
 
       dispatch(setCurrentUser({ applicationId: response._id, applicationStatus: response.status}));
@@ -68,6 +79,27 @@ const EditApplication: React.FC = () => {
     return <div>Loading...</div>;
   }
 
+  const handleFileSubmit = async (info: any) => {
+    const { status, response } = info.file;
+
+    if (status === "uploading") {
+      // File is uploading
+    }
+    if (status === "done") {
+      if (response && response.documentId && response.name) {
+        // const field = response.name;
+        // setFilesId((prev: any) => {
+        //   return { ...prev, [field]: response.documentId };
+        // });
+        message.success(`${info.file.name} file uploaded successfully.`);
+      } else {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    } else if (status === "error") {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  };
+  
   return (      
     <>
       {user.applicationStatus?<StatusTag status={user.applicationStatus} />:null}           
@@ -78,10 +110,80 @@ const EditApplication: React.FC = () => {
         layout="vertical"
         disabled={formDisabled}
       >
-        <ProfileForm fields={nameFields} onFinish={onFinish} form={form} setFilesId={setFilesId} sectionName="Name" />
+        <ProfileForm fields={nameFields} onFinish={onFinish} form={form}  sectionName="Name" />
         <ProfileForm fields={addressFields}  onFinish={onFinish} form={form} sectionName="Address" />
         <ProfileForm fields={contactFields}  onFinish={onFinish} form={form} sectionName="Contact Info" />
-        <ProfileForm fields={employmentFields}  onFinish={onFinish} form={form} sectionName="Employment" />
+        <Form.Item
+          name="citizenship"
+          label="Permanent resident or citizen of the U.S.?"
+        >
+          <Radio.Group onChange={onCitizenshipStatusChange}>
+            <Radio value="citizen">Citizen</Radio>
+            <Radio value="green card">Green Card</Radio>
+            <Radio value="no">No</Radio>
+          </Radio.Group>          
+        </Form.Item>
+        {citizenshipStatus === "no" && ( 
+          <div className="profile-section">
+            <h2>Employment</h2>
+        
+            {/* Visa Type */}
+            <Form.Item
+              label="Visa Type"
+              name={["workAuth"]}
+              rules={[{ required: true, message: "Please select your work authorization!" }]}
+            >
+              <Select onChange={onVisaStatusChange}>
+                <Select.Option value="H1-B">H1-B</Select.Option>
+                <Select.Option value="L2">L2</Select.Option>
+                <Select.Option value="F1(CPT/OPT)">F1(CPT/OPT)</Select.Option>
+                <Select.Option value="H4">H4</Select.Option>
+                <Select.Option value="Other">Other</Select.Option>
+              </Select>
+            </Form.Item>
+        
+            {/* workAuth Start Date */}
+            <Form.Item
+              label="workAuth Start Date"
+              name={["workAuth", "workAuthStartDate"]}
+              rules={[{ required: true, message: "Please select your workAuth Start Date!" }]}
+            >
+              <DatePicker />
+            </Form.Item>
+        
+            {/* workAuth End Date */}
+            <Form.Item
+              label="workAuth End Date"
+              name={["workAuth", "workAuthEndDate"]}
+              rules={[{ required: true, message: "Please select your workAuth End Date!" }]}
+            >
+              <DatePicker />
+            </Form.Item>
+        
+            {visaStatus === "F1(CPT/OPT)" && ( <Form.Item
+              label="Other Visa Type"
+              name={["visaStatus", "optReceipt"]}
+            ><Upload
+                action="http://localhost:3050/api/document"
+                data={{
+                  username: user.name,
+                  name: "optReceipt",
+                }}
+                onChange={handleFileSubmit}
+                maxCount={1}
+              >
+                <Button icon={<UploadOutlined />}>Click to Upload</Button>
+              </Upload>
+            </Form.Item> )}
+
+            {visaStatus === "Other" && ( <Form.Item
+              label="Other Visa Type"
+              name={["workAuth", "workAuthOther"]}
+            >
+              <Input />
+            </Form.Item> )}
+            
+          </div> )}
         {/* <ProfileForm fields={emergencyContactFields}  onFinish={onFinish} form={form} sectionName="Emergency Contact" /> */}
         {/* <ProfileForm fields={groupFieldsBySection('documents')} form={form} sectionName="Documents" /> */}
 
