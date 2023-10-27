@@ -8,4 +8,6 @@ export interface UserState {
     applicationId: string | null;
     applicationStatus: "pending" | "rejected" | "approved" | null,
     token: string;
+    visaStatus: object;
+    workAuthType: string;
 }

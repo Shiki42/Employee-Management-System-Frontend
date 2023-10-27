@@ -93,10 +93,7 @@ const EditApplication: React.FC = () => {
     }
     if (status === "done") {
       if (response && response.documentId) {
-        // const field = response.name;
-        // setFilesId((prev: any) => {
-        //   return { ...prev, [field]: response.documentId };
-        // });
+
         message.success(`${info.file.name} file uploaded successfully.`);
       } else {
         message.error(`${info.file.name} file upload failed.`);

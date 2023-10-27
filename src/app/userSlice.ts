@@ -4,7 +4,7 @@ import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import { signIn, signUp } from "../services/auth";
 import {Application} from "../interfaces/Application.interface";
 import {UserState} from "../interfaces/UserState.interface";
-
+import { act } from "react-dom/test-utils";
 const emptyState = () => {
   return (
     {
@@ -14,6 +14,7 @@ const emptyState = () => {
       name: "",
       applicationId:null,
       applicationStatus: null,
+
     } as  UserState);
 };
 const initialState = {
@@ -59,7 +60,7 @@ const currentUserSlice = createSlice({
   initialState,
   reducers: {
     setCurrentUser: (state, action) => {
-      const {name, email, role, applicationId, applicationStatus,  token} = action.payload;
+      const {name, email, role, applicationId, applicationStatus,  token, visaStatus, workAuthType} = action.payload;
       state.isAuthenticated = true;
 
       if(name!=undefined) {
@@ -78,7 +79,13 @@ const currentUserSlice = createSlice({
         state.applicationStatus = applicationStatus;
       }
       if(token!=undefined) {
-        localStorage.setItem("token", token);
+        state.token = token;
+      }
+      if(visaStatus!=undefined) {
+        state.visaStatus = visaStatus;
+      }
+      if(workAuthType!=undefined) {
+        state.workAuthType = workAuthType;
       }
       localStorage.setItem("user", JSON.stringify(action.payload));
     },
@@ -94,15 +101,34 @@ const currentUserSlice = createSlice({
   },
   extraReducers: builder => {
     builder.addCase(authUser.fulfilled, (state, action) => {        
-      const {name, email, role, applicationId, applicationStatus, token} = action.payload;
-      state.name = name;
-      state.email = email;
-      state.role = role;
+      const {name, email, role, applicationId, applicationStatus,  token, visaStatus, workAuthType} = action.payload;
       state.isAuthenticated = true;
-      state.applicationId = applicationId;
-      state.applicationStatus = applicationStatus;
-      state.token = token;
-      localStorage.setItem("user", JSON.stringify(state));
+
+      if(name!=undefined) {
+        state.name  = name;
+      }
+      if(email!=undefined) {
+        state.email = email;
+      }
+      if(role!=undefined) {
+        state.role = role;
+      }
+      if(applicationId!=undefined) {
+        state.applicationId = applicationId;
+      }
+      if(applicationStatus!=undefined) {
+        state.applicationStatus = applicationStatus;
+      }
+      if(token!=undefined) {
+        state.token = token;
+      }
+      if(visaStatus!=undefined) {
+        state.visaStatus = visaStatus;
+      }
+      if(workAuthType!=undefined) {
+        state.workAuthType = workAuthType;
+      }
+      localStorage.setItem("user", JSON.stringify(action.payload));
         
     });
     builder.addCase(authUser.rejected, (state, action) => {

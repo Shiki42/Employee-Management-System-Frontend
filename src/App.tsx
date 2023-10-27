@@ -11,6 +11,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import EditApplication from "./pages/EditApplication";
 import ProfilePage from "./pages/EmployeeProfile";
+import VisaStatusManagement from "./pages/EmployeeVisa";
 import NotFound from "./pages/NotFound";
 import LoginFirst from "./pages/LoginFirst";
 import "./App.css";
@@ -20,7 +21,7 @@ function App() {
 
   useEffect(() => {
     async function fetchStatus() {
-      localStorage.removeItem("user");
+      //localStorage.removeItem("user");
       const userString = localStorage.getItem("user");
       
       if (userString) {
@@ -63,7 +64,7 @@ function App() {
             <Route index element={<ProfilePage />} />
             <Route path="application" element={<EditApplication />} />
             <Route path="profile" element={<ProfilePage />} />
-            <Route path="visa-status" element={<EditApplication />} />
+            <Route path="visa-status" element={<VisaStatusManagement />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
