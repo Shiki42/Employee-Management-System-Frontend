@@ -50,7 +50,7 @@ const Navbar = () => {
       <Menu.Item onClick={() => navigate("/")}>
         Employee Profiles
       </Menu.Item>
-      <Menu.Item onClick={() => navigate("/visa-status")}>
+      <Menu.Item onClick={() => navigate("/visaStatus")}>
         Visa Status Management
       </Menu.Item>
       <Menu.Item onClick={() => navigate("/hiring-management")}>

@@ -22,7 +22,7 @@ const EditApplication: React.FC = () => {
   const user = useSelector((state:any) => state.user);
 
   // const [filesId, setFilesId] = useState<any>({});
-  const [formData, setFormData] = useState<any>({});
+  const [formData, setFormData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [formDisabled, setFormDisabled] = useState<boolean>(false);
 
@@ -41,17 +41,23 @@ const EditApplication: React.FC = () => {
   useEffect(() => {
     form.setFieldsValue({ email: user.email});
     async function fetchApplication() {
-      if (user.applicationId) {
-        setIsLoading(true);
-        const response = await getApplication({ applicationId: user.applicationId });
-        if (response.application) {
-          setFormData(response.application);
+      try{
+        if (user.applicationId) {
+          setIsLoading(true);
+          const response = await getApplication({ applicationId: user.applicationId });
+          if (response.application) {
+            console.log("response.application",response.application);
+            setFormData(response.application);
+          }
+          if (response.application.status !== "rejected") {
+            setFormDisabled(true);
+          }
         }
-        if (response.application.status !== "rejected") {
-          setFormDisabled(true);
-        }
+        setIsLoading(false);
+      } catch (err) {
+        navigate("/error");
+        console.log(err);
       }
-      setIsLoading(false);
 
     }
     fetchApplication();
@@ -59,12 +65,21 @@ const EditApplication: React.FC = () => {
 
   useEffect(() => {
     console.log("formData",formData);
-    if(formData.workAuth) {
-      formData.workAuth.StartDate = formData.workAuth.StartDate ? moment(formData.workAuth.StartDate) : null;
-      formData.workAuth.EndDate = formData.workAuth.EndDate ? moment(formData.workAuth.EndDate) : null;
-    }
-    form.setFieldsValue({...formData, DOB: formData.DOB ? moment(formData.DOB) : null,});
-  }, [formData,citizenshipStatus,visaStatus]);
+    if(!formData) return;
+    form.setFieldsValue({
+      ...formData,
+      DOB: formData.DOB ? moment(formData.DOB) : null,
+      workAuth: {
+        ...formData.workAuth,
+        StartDate: formData.workAuth.StartDate
+          ? moment(formData.workAuth.StartDate)
+          : null,
+        EndDate: formData.workAuth.EndDate
+          ? moment(formData.workAuth.EndDate)
+          : null,
+      },
+    });
+  }, [formData]);
 
   const onFinish = async (values: any) => {
     try {
@@ -87,7 +102,7 @@ const EditApplication: React.FC = () => {
 
   const handleFileSubmit = async (info: any) => {
     const { status, response } = info.file;
-
+    console.log("info",response);
     if (status === "uploading") {
       // File is uploading
     }

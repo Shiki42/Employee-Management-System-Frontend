@@ -40,8 +40,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields, sectionName, o
       // File is uploading
     }
     if (status === "done") {
-      if (response && response.documentId && response.name) {
-        const field = response.name;
+      if (response && response.documentId ) {
         // setFilesId((prev: any) => {
         //   return { ...prev, [field]: response.documentId };
         // });

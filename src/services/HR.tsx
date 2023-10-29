@@ -17,3 +17,11 @@ export const getProfileByEmployeeId = async (id:string) => {
     data: null
   });
 };
+
+export const getEmployeesStatusOngoing = async () => {
+  return await apiCall({
+    url: "/api/users/visaStatus/ongoing",
+    method: "GET",
+    data: null
+  });
+};
