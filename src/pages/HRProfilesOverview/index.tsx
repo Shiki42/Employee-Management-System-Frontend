@@ -9,6 +9,8 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { getEmployeeProfiles } from "../../services/HR";
 
+
+
 export default function HRProfilesManagement () {
 
   const navigate = useNavigate();
@@ -44,7 +46,7 @@ export default function HRProfilesManagement () {
       { profiles.map((profile:any,index:number) => 
         (
           <div key={index}>
-            <a href={`/profile/${profile._id}`}>Name:{profile.name.firstName + " " + profile.name.lastName}</a>
+            <div onClick={()=>{navigate(`/user/${profile.creator}/profile`);}}>Name:{profile.name.firstName + " " + profile.name.lastName}</div>
                 
                 Email:{profile.email}
                 Phone:{profile.phone}

@@ -44,10 +44,10 @@ const Navbar = () => {
 
   const menuForHR = (
     <Menu mode='horizontal'>
-      <Menu.Item onClick={() => navigate("/home")}>
+      <Menu.Item onClick={() => navigate("/")}>
         Home
       </Menu.Item>
-      <Menu.Item onClick={() => navigate("/employee-profiles")}>
+      <Menu.Item onClick={() => navigate("/")}>
         Employee Profiles
       </Menu.Item>
       <Menu.Item onClick={() => navigate("/visa-status")}>

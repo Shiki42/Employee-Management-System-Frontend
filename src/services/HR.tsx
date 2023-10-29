@@ -10,9 +10,9 @@ export const getEmployeeProfiles = async () => {
   });
 };
 
-export const getEmployeeProfile = async (username:string) => {
+export const getProfileByEmployeeId = async (id:string) => {
   return await apiCall({
-    url: `/api/user/${username}/profile`,
+    url: `/api/user/${id}/profile`,
     method: "GET",
     data: null
   });

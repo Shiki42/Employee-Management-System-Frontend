@@ -15,6 +15,7 @@ import ProfilePage from "./pages/EmployeeProfile";
 import VisaStatusManagement from "./pages/EmployeeVisa";
 
 import HRProfilesOverview from "./pages/HRProfilesOverview";
+import HRProfile from "./pages/HRProfile";
 
 import NotFound from "./pages/NotFound";
 import LoginFirst from "./pages/LoginFirst";
@@ -76,7 +77,7 @@ function App() {
           <Routes>
             <Route path="/" element={<MainLayout/>}>
               <Route index element={<HRProfilesOverview />} />
-              <Route path="/api/user/:username/profile" element={<HRProfilesOverview />} />
+              <Route path="/user/:id/profile" element={<HRProfile />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
