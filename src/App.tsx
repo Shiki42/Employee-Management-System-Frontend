@@ -9,9 +9,13 @@ import { useEffect } from "react";
 import MainLayout from "./components/Layout";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+
 import EditApplication from "./pages/EditApplication";
 import ProfilePage from "./pages/EmployeeProfile";
 import VisaStatusManagement from "./pages/EmployeeVisa";
+
+import HRProfilesOverview from "./pages/HRProfilesOverview";
+
 import NotFound from "./pages/NotFound";
 import LoginFirst from "./pages/LoginFirst";
 import "./App.css";
@@ -25,19 +29,18 @@ function App() {
       const userString = localStorage.getItem("user");
       
       if (userString) {
+        const userData = JSON.parse(userString);
         try {
-          const userData = JSON.parse(userString);
+          
           if(userData.token) {
             const userStatus = await getStatus({token:userData.token});
-            if (userStatus.applicationStatus) {
-              userData.applicationStatus = userStatus.applicationStatus;
-            }
+            const newUserData = {...userData, ...userStatus};
+            dispatch(setCurrentUser(newUserData));
           }
-          dispatch(setCurrentUser(userData));
+          
 
         } catch (e) {
           console.error("Parsing error:", e);
-          const userData = JSON.parse(userString);
           dispatch(setCurrentUser(userData));
         }
       }
@@ -70,8 +73,13 @@ function App() {
         </Routes>
       ) : (
         user.role === "HR" && (
-          // HR-specific routes here
-          <></>
+          <Routes>
+            <Route path="/" element={<MainLayout/>}>
+              <Route index element={<HRProfilesOverview />} />
+              <Route path="/api/user/:username/profile" element={<HRProfilesOverview />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
         )
       )}
       <ConditionalNavigate />

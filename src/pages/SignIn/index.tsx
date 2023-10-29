@@ -60,14 +60,15 @@ export default function SignIn() {
           message.error( "Wrong name or password. Please try again.");
         } else {
           message.success("You have successfully logged in.");
-          if (response.payload.role === "employee" && !(response.payload.applicationStatus === "approved")) {
-            //navigate(location.state?.from || '/');
-            navigate("/application");
-          } else if ( response.payload.role === "employee") {
-            navigate("/profile");
-          } else {
-            navigate("/dashboard");
-          }
+          navigate("/");
+          // if (response.payload.role === "employee" && !(response.payload.applicationStatus === "approved")) {
+          //   //navigate(location.state?.from || '/');
+          //   navigate("/application");
+          // } else if ( response.payload.role === "employee") {
+          //   navigate("/profile");
+          // } else {
+          //   navigate("/");
+          // }
         }
       })
       .catch(err => {

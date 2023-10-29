@@ -17,7 +17,8 @@ import { getApplication,saveApplication } from "../../services/application";
 const ProfilePage: React.FC = () => {
   const [form] = Form.useForm();
 
-  const user = useSelector((state:any) => state.user);
+  
+  const currentUser = useSelector((state:any) => state.user);
   const dispatch = useDispatch();
 
   const [fileId, setFileId] = useState<any>(null);
@@ -25,11 +26,11 @@ const ProfilePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    form.setFieldsValue({ email: user.email});
+    form.setFieldsValue({ email: currentUser.email});
     async function fetchApplication() {
-      if (user.applicationId) {
+      if (currentUser.applicationId) {
         setIsLoading(true);
-        const response = await getApplication({ applicationId: user.applicationId });
+        const response = await getApplication({ applicationId: currentUser.applicationId });
         if (response.application) {
           setFormData(response.application);
         }
@@ -38,7 +39,7 @@ const ProfilePage: React.FC = () => {
   
     }
     fetchApplication();
-  }, [user]);
+  }, [currentUser]);
   
   useEffect(() => {
     form.setFieldsValue({...formData, DOB: formData.DOB ? moment(formData.DOB) : null});
@@ -48,7 +49,7 @@ const ProfilePage: React.FC = () => {
     try {
       //values.profilePicture = fileId;
   
-      const response = await saveApplication({...values,username:user.name, applicationId: user.applicationId});
+      const response = await saveApplication({...values,username:currentUser.name, applicationId: currentUser.applicationId});
   
       message.success("Profile update edited.");
     } catch (err) {
