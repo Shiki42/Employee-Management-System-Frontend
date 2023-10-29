@@ -14,3 +14,11 @@ export const uploadFile = async (username: string, file: any) => {
 
   });
 };
+
+export const getDocument = async (id:string) => {
+  return await apiCall({
+    url: `/api/document/${id}`,
+    method: "GET",
+    data: null
+  });
+};

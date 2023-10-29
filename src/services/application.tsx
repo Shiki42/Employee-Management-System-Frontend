@@ -25,8 +25,7 @@ export const getApplication = async (data: { applicationId:string }) => {
 //     });
 // };
 
-export const saveApplication = async (data: Record<string,unknown>) => {
-  console.log(data);
+export const updateApplication = async (data: Record<string,unknown>) => {
   return await apiCall({
     url: `/api/application/${data.applicationId}`,
     method: "PUT",
@@ -34,7 +33,7 @@ export const saveApplication = async (data: Record<string,unknown>) => {
   });
 };
 
-export const submitApplication = async (data: Record<string,unknown>) => {
+export const createApplication = async (data: Record<string,unknown>) => {
   return await apiCall({
     url: "/api/application",
     method: "POST",

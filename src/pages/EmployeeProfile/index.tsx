@@ -12,7 +12,7 @@ import { ProfileForm } from "../../components/Form/profileForm";
 import { Field } from "../../interfaces/FormField.interface";
 import { nameFields,addressFields,contactFields,employmentFields,emergencyContactFields } from "../../components/Form/profileFields";
 
-import { getApplication,saveApplication } from "../../services/application";
+import { getApplication,updateApplication } from "../../services/application";
 
 const ProfilePage: React.FC = () => {
   const [form] = Form.useForm();
@@ -49,7 +49,7 @@ const ProfilePage: React.FC = () => {
     try {
       //values.profilePicture = fileId;
   
-      const response = await saveApplication({...values,username:currentUser.name, applicationId: currentUser.applicationId});
+      const response = await updateApplication({...values,username:currentUser.name, applicationId: currentUser.applicationId});
   
       message.success("Profile update edited.");
     } catch (err) {
@@ -68,11 +68,11 @@ const ProfilePage: React.FC = () => {
       onFinish={onFinish}
       layout="vertical"
     >
-      <ProfileForm fields={nameFields} onFinish={onFinish} form={form}  sectionName="Name" />
-      <ProfileForm fields={addressFields}  onFinish={onFinish} form={form} sectionName="Address" />
-      <ProfileForm fields={contactFields}  onFinish={onFinish} form={form} sectionName="Contact Info" />
-      <ProfileForm fields={employmentFields}  onFinish={onFinish} form={form} sectionName="Employment" />
-      <ProfileForm fields={emergencyContactFields}  onFinish={onFinish} form={form} sectionName="Emergency Contact" />
+      <ProfileForm fields={nameFields} onFinish={onFinish} form={form} sectionButtons={true} sectionName="Name" />
+      <ProfileForm fields={addressFields}  onFinish={onFinish} form={form} sectionButtons={true} sectionName="Address" />
+      <ProfileForm fields={contactFields}  onFinish={onFinish} form={form} sectionButtons={true} sectionName="Contact Info" />
+      <ProfileForm fields={employmentFields}  onFinish={onFinish} form={form} sectionButtons={true} sectionName="Employment" />
+      <ProfileForm fields={emergencyContactFields}  onFinish={onFinish} form={form} sectionButtons={true} sectionName="Emergency Contact" />
       {/* <ProfileForm fields={groupFieldsBySection('documents')} form={form} sectionName="Documents" /> */}
 
       <Form.Item>

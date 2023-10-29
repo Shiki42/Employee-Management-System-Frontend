@@ -19,12 +19,21 @@ export default async function apiCall({ url: apiUrl, method, data, headers }:
     },
     body: data instanceof FormData ? data : (data ? JSON.stringify(data) : null)
   });
-  if (!response.ok) {
-    
-    const  error  = await response.json();
 
+  if (!response.ok) {
+    const error = await response.json();
     throw new Error(error.message);
   }
-  const result = await response.json();
-  return result;
+
+  const contentType = response.headers.get("content-type");
+
+  if (contentType && contentType.includes("application/json")) {
+    // If the response is JSON, parse it and return as usual
+    const result = await response.json();
+    return result;
+  } else {
+    // If the response is not JSON (e.g., a file), return the response directly
+    return response.blob(); // You can also use .arrayBuffer() if needed
+  }
 }
+

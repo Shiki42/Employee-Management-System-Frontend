@@ -12,7 +12,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { nameFields,addressFields,contactFields,referrerFields, employmentFields,emergencyContactFields } from "../../components/Form/profileFields";
 import { ProfileForm } from "../../components/Form/profileForm"; 
-import { getApplication,submitApplication } from "../../services/application";
+import { getApplication,createApplication, updateApplication } from "../../services/application";
 import StatusTag from "../../components/StatusTag";
 
 const EditApplication: React.FC = () => {
@@ -34,7 +34,6 @@ const EditApplication: React.FC = () => {
   };
 
   const onVisaStatusChange = (value:string) => {
-    console.log(value);
     setvisaStatus(value);
   };
 
@@ -79,18 +78,19 @@ const EditApplication: React.FC = () => {
           : null,
       },
     });
-  }, [formData]);
+  }, [formData,citizenshipStatus,visaStatus]);
 
   const onFinish = async (values: any) => {
     try {
-      // values.profilePicture = filesId.profilePicture;
-      // values.driverLicense = filesId.driverLicense;
-      // values.visaStatus.optReceipt.docId = filesId.optReceipt;
-      const response = await submitApplication({...values,username:user.name});
-
-      dispatch(setCurrentUser({ applicationId: response._id, applicationStatus: response.status}));
-      navigate("/");
-      message.success("Application successfully edited.");
+      if(user.application === null) {
+        const response = await createApplication({...values,username:user.name});
+        dispatch(setCurrentUser({ applicationId: response._id, applicationStatus: response.status}));
+        message.success("Application successfully created.");
+      } else {
+        const response = await updateApplication({...values,username:user.name, applicationId: user.applicationId});
+        dispatch(setCurrentUser({ applicationStatus: response.status}));
+        message.success("Application successfully edited.");
+      }      
     } catch (err) {
       message.error("Error when updating Application");
     }

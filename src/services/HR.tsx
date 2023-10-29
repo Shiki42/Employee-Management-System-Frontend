@@ -25,3 +25,19 @@ export const getEmployeesStatusOngoing = async () => {
     data: null
   });
 };
+
+export const updateEmpolyeeStatus = async (data: { id:string; type:string, status:string }) => {
+  return await apiCall({
+    url: `/api/user/${data.id}/visaStatus`,
+    method: "PUT",
+    data
+  });
+};
+
+export const sendNotification = async ( email:string ) => {
+  return await apiCall({
+    url: "/api/sendNotification",
+    method: "POST",
+    data: {email}
+  });
+};
