@@ -9,5 +9,5 @@ export interface UserState {
     applicationStatus: "pending" | "rejected" | "approved" | null,
     token: string;
     visaStatus: object;
-    workAuthType: string;
+    workAuth: object;
 }

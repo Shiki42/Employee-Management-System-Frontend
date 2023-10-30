@@ -10,9 +10,11 @@ import { setCurrentUser } from "../../app/userSlice";
 import { Form, Input, Button, Select, Upload, DatePicker, Radio, Space,message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { nameFields,addressFields,contactFields,referrerFields, employmentFields,emergencyContactFields } from "../../components/Form/profileFields";
+import { handleFileSubmit,nameFields,addressFields,contactFields,referrerFields,
+  employmentFields,emergencyContactFields } from "../../components/Form/profileSharedModules";
 import { ProfileForm } from "../../components/Form/profileForm"; 
 import { getApplication,createApplication, updateApplication } from "../../services/application";
+
 import StatusTag from "../../components/StatusTag";
 
 const EditApplication: React.FC = () => {
@@ -101,24 +103,6 @@ const EditApplication: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  const handleFileSubmit = async (info: any) => {
-    const { status, response } = info.file;
-    console.log("info",response);
-    if (status === "uploading") {
-      // File is uploading
-    }
-    if (status === "done") {
-      if (response && response.documentId) {
-
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    } else if (status === "error") {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  };
-  
   return (      
     <>
       {user.applicationStatus?<StatusTag status={user.applicationStatus} />:null}           

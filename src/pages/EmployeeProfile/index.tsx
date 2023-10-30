@@ -10,7 +10,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Form, FormInstance, message } from "antd";
 import { ProfileForm } from "../../components/Form/profileForm"; 
 import { Field } from "../../interfaces/FormField.interface";
-import { nameFields,addressFields,contactFields,employmentFields,emergencyContactFields } from "../../components/Form/profileFields";
+import { nameFields,addressFields,contactFields,employmentFields,emergencyContactFields } from "../../components/Form/profileSharedModules";
 
 import { getApplication,updateApplication } from "../../services/application";
 

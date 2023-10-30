@@ -60,7 +60,7 @@ const currentUserSlice = createSlice({
   initialState,
   reducers: {
     setCurrentUser: (state, action) => {
-      const {name, email, role, applicationId, applicationStatus,  token, visaStatus, workAuthType} = action.payload;
+      const {name, email, role, applicationId, applicationStatus,  token, visaStatus, workAuth} = action.payload;
       state.isAuthenticated = true;
 
       if(name!=undefined) {
@@ -84,8 +84,8 @@ const currentUserSlice = createSlice({
       if(visaStatus!=undefined) {
         state.visaStatus = visaStatus;
       }
-      if(workAuthType!=undefined) {
-        state.workAuthType = workAuthType;
+      if(workAuth!=undefined) {
+        state.workAuth = workAuth;
       }
       localStorage.setItem("user", JSON.stringify(action.payload));
     },
@@ -101,7 +101,7 @@ const currentUserSlice = createSlice({
   },
   extraReducers: builder => {
     builder.addCase(authUser.fulfilled, (state, action) => {        
-      const {name, email, role, applicationId, applicationStatus,  token, visaStatus, workAuthType} = action.payload;
+      const {name, email, role, applicationId, applicationStatus,  token, visaStatus, workAuth} = action.payload;
       state.isAuthenticated = true;
 
       if(name!=undefined) {
@@ -125,8 +125,8 @@ const currentUserSlice = createSlice({
       if(visaStatus!=undefined) {
         state.visaStatus = visaStatus;
       }
-      if(workAuthType!=undefined) {
-        state.workAuthType = workAuthType;
+      if(workAuth!=undefined) {
+        state.workAuth = workAuth;
       }
       localStorage.setItem("user", JSON.stringify(action.payload));
         

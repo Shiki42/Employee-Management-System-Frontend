@@ -1,4 +1,29 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Field } from "../../interfaces/FormField.interface";
+
+import { message } from "antd";
+
+export const handleFileSubmit = async (info: any) => {
+  const { status, response } = info.file;
+
+  if (status === "uploading") {
+    // File is uploading
+  }
+  if (status === "done") {
+    if (response && response.documentId ) {
+
+      message.success(`${info.file.name} file uploaded successfully.`);
+    } else {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  } else if (status === "error") {
+    message.error(`${info.file.name} file upload failed.`);
+  }
+};
+
+
+
 
 export const nameFields: Field[] =[
   {

@@ -5,22 +5,27 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {setCurrentUser} from "../../app/userSlice";
 
-import { Form, Button, Upload, message } from "antd";
+import { Form, Button, Upload, Modal, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import StatusTag from "../../components/StatusTag";
 
 import { getStatus } from "../../services/auth";
-// Import your StatusTag component
-import StatusTag from "../../components/StatusTag";
+import {getDocument} from "../../services/document";
+
+
+
 
 const VisaStatusManagement = () => {
   const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [visaStatus, setVisaStatus] = useState<any>({});
+  const [currentDocId, setCurrentDocId] = useState<string | null>(null);
 
   useEffect(() => {
-    //console.log("user",user);
+
     async function fetchStatus() {        
       try {
         if(user.token) {
@@ -38,7 +43,11 @@ const VisaStatusManagement = () => {
     fetchStatus();
   }, [dispatch,user]);
   
-  
+  const previewDocument = async (docId: string) => {
+    const document = await getDocument(docId);
+    // Show the document in a modal
+    setIsModalOpen(true);
+  };
 
   const handleFileSubmit = async (info: any) => {
     const { status, response } = info.file;
@@ -63,18 +72,21 @@ const VisaStatusManagement = () => {
     }
   };
 
-  if (user.workAuthType !== "F1(CPT/OPT)") {
+  if (user?.workAuth?.type !== "F1(CPT/OPT)") {
     return <div>This page is only for users with OPT visas.</div>;
   }
 
   return (
     <div>
+      <Modal visible={isModalOpen} onCancel={() => setIsModalOpen(false)}>
+        {/* Your PDF preview logic here based on currentDocId */}
+      </Modal>
       <h1>Visa Status Management</h1>
 
       <h2>OPT Receipt</h2>
       <StatusTag status={visaStatus.optReceipt?.status} />
       <p>{visaStatus.optReceipt?.status === "pending" && "Waiting for HR to approve your OPT Receipt."}</p>
-      <Form.Item label="OPT Receipt" name={["visaStatus", "optReceipt"]}>
+      {visaStatus.optReceipt?.status !== "approved"  &&<Form.Item label="OPT Receipt" name={["visaStatus", "optReceipt"]}>
         <Upload
           disabled={false}
           action="http://localhost:3050/api/document"
@@ -87,12 +99,12 @@ const VisaStatusManagement = () => {
         >
           <Button icon={<UploadOutlined />}>Click to Upload</Button>
         </Upload>
-      </Form.Item>
+      </Form.Item>}
 
       <h2>OPT EAD</h2>
       <StatusTag status={visaStatus.optEad?.status} />
       <p>{visaStatus.optEad?.status === "pending" && "Waiting for HR to approve your OPT EAD."}</p>
-      <Form.Item label="OPT EAD" name={["visaStatus", "optEad"]}>
+      {(visaStatus.optReceipt?.status === "approved" && visaStatus.optEad?.status !== "approved") && <Form.Item label="OPT EAD" name={["visaStatus", "optEad"]}>
         <Upload
           disabled={visaStatus.optReceipt?.status !== "approved"}
           action="http://localhost:3050/api/document"
@@ -105,12 +117,12 @@ const VisaStatusManagement = () => {
         >
           <Button icon={<UploadOutlined />}>Click to Upload</Button>
         </Upload>
-      </Form.Item>
+      </Form.Item>}
 
       <h2>I-983</h2>
       <StatusTag status={visaStatus.i983?.status} />
       <p>{visaStatus.i983?.status === "pending" && "Waiting for HR to approve and sign your I-983."}</p>
-      <Form.Item label="I-983" name={["visaStatus", "i983"]}>
+      {visaStatus.optEad?.status === "approved" &&<Form.Item label="I-983" name={["visaStatus", "i983"]}>
         <Upload
           disabled={visaStatus.optEad?.status !== "approved"}
           action="http://localhost:3050/api/document"
@@ -123,7 +135,7 @@ const VisaStatusManagement = () => {
         >
           <Button icon={<UploadOutlined />}>Click to Upload</Button>
         </Upload>
-      </Form.Item>
+      </Form.Item>}
 
       <h2>I-20</h2>
       <StatusTag status={visaStatus.i20?.status} />

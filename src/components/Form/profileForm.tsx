@@ -6,14 +6,12 @@ import { UploadOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { FormInstance } from "antd/lib/form/Form";
 import { Field } from "../../interfaces/FormField.interface";
-
+import { handleFileSubmit } from "./profileSharedModules";
 interface ProfileFormProps {
   fields: Field[];
   sectionName: string;
   onFinish: (values: any) => void;
-  // setFilesId?:any;
   form:any;
-  formData?: any;
   sectionButtons?: boolean;
 }
 
@@ -30,26 +28,6 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields, sectionName, o
       });
     } else {
       setIsEditing(true);
-    }
-  };
-
-  const handleFileSubmit = async (info: any) => {
-    const { status, response } = info.file;
-
-    if (status === "uploading") {
-      // File is uploading
-    }
-    if (status === "done") {
-      if (response && response.documentId ) {
-        // setFilesId((prev: any) => {
-        //   return { ...prev, [field]: response.documentId };
-        // });
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    } else if (status === "error") {
-      message.error(`${info.file.name} file upload failed.`);
     }
   };
 
