@@ -45,7 +45,8 @@ const EditApplication: React.FC = () => {
           setIsLoading(true);
           const response = await getApplication({ applicationId: user.applicationId });
           if (response.application) {
-            console.log("response.application",response.application);
+            setCitizenshipStatus(response.application.citizenship);
+            setvisaStatus(response.application.workAuth.type);
             setFormData(response.application);
           }
           if (response.application.status !== "rejected") {
@@ -181,7 +182,9 @@ const EditApplication: React.FC = () => {
             {visaStatus === "F1(CPT/OPT)" && ( <Form.Item
               label="optReceipt"
               name={["visaStatus", "optReceipt"]}
-              rules={[{ required: true, message: "Please upload your optReceipt!" }]}
+              // fix this later
+              // rules={[{ required: true, message: "Please upload your optReceipt!" }]}
+              rules={[{  message: "Please upload your optReceipt!" }]}
             ><Upload
                 action="http://localhost:3050/api/document"
                 data={{

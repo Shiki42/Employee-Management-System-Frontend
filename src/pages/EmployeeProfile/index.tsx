@@ -4,7 +4,7 @@ import moment from "moment";
 
 import React from "react";
 import { useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import { Form, FormInstance, message } from "antd";
@@ -17,33 +17,54 @@ import { getApplication,updateApplication } from "../../services/application";
 const ProfilePage: React.FC = () => {
   const [form] = Form.useForm();
 
-  
+  const navigate = useNavigate();
   const currentUser = useSelector((state:any) => state.user);
   const dispatch = useDispatch();
 
   const [fileId, setFileId] = useState<any>(null);
-  const [formData, setFormData] = useState<any>({});
+  const [formData, setFormData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     form.setFieldsValue({ email: currentUser.email});
     async function fetchApplication() {
-      if (currentUser.applicationId) {
-        setIsLoading(true);
-        const response = await getApplication({ applicationId: currentUser.applicationId });
-        if (response.application) {
-          setFormData(response.application);
+      try{
+        if (currentUser.applicationId) {
+          setIsLoading(true);
+          const response = await getApplication({ applicationId: currentUser.applicationId });
+          if (response.application) {
+            setFormData(response.application);
+          }
+
         }
+        setIsLoading(false);
+      } catch (err) {
+        navigate("/error");
+        console.log(err);
       }
-      setIsLoading(false);
-  
+
     }
     fetchApplication();
   }, [currentUser]);
-  
+
   useEffect(() => {
-    form.setFieldsValue({...formData, DOB: formData.DOB ? moment(formData.DOB) : null});
+    console.log("formData",formData);
+    if(!formData) return;
+    form.setFieldsValue({
+      ...formData,
+      DOB: formData.DOB ? moment(formData.DOB) : null,
+      workAuth: {
+        ...formData.workAuth,
+        StartDate: formData.workAuth.StartDate
+          ? moment(formData.workAuth.StartDate)
+          : null,
+        EndDate: formData.workAuth.EndDate
+          ? moment(formData.workAuth.EndDate)
+          : null,
+      },
+    });
   }, [formData]);
+  
   
   const onFinish = async (values: any) => {
     try {

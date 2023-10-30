@@ -135,7 +135,7 @@ export const employmentFields: Field[] = [
   // Visa Type
   {
     label: "Visa Type",
-    name: ["workAuth"],
+    name: ["workAuth","type"],
     type: "select",
     options: [
       { label: "H1-B", value: "H1-B" },
@@ -148,19 +148,19 @@ export const employmentFields: Field[] = [
   },
   {
     label: "workAuth Start Date",
-    name: ["workAuth","workAuthStartDate"],
+    name: ["workAuth","StartDate"],
     type: "datePicker",
     rules: [{ required: true, message: "Please select your workAuth Start Date!" }],
   },
   {
     label: "workAuth End Date",
-    name: ["workAuth","workAuthEndDate"],
+    name: ["workAuth","EndDate"],
     type: "datePicker",
     rules: [{ required: true, message: "Please select your workAuth End Date!" }],
   },
   {
     label: "Other Visa Type",
-    name: ["workAuth","workAuthOther"],
+    name: ["workAuth","Other"],
     type: "text",
   },
 ];

@@ -20,7 +20,7 @@ const VisaStatusManagement = () => {
   const [visaStatus, setVisaStatus] = useState<any>({});
 
   useEffect(() => {
-    console.log("user",user);
+    //console.log("user",user);
     async function fetchStatus() {        
       try {
         if(user.token) {

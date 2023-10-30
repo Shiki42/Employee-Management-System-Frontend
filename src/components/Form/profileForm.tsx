@@ -74,7 +74,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields, sectionName, o
           rules={field.rules}
           // initialValue={field.initialValue}
         >
-          {field.type === "text" && <Input disabled={sectionButtons} />}
+          {field.type === "text" && <Input disabled={sectionButtons && !isEditing} />}
           {field.type === "upload" && (
             <Upload
               action="http://localhost:3050/api/document"
@@ -84,15 +84,15 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields, sectionName, o
               }}
               onChange={handleFileSubmit}
               maxCount={1}
-              disabled={sectionButtons}
+              disabled={sectionButtons && !isEditing}
             >
               <Button icon={<UploadOutlined />}>Click to Upload</Button>
             </Upload>
           )}
-          {field.type === "datePicker" && <DatePicker disabled={sectionButtons} />}
-          {field.type === "radio" && <Radio.Group options={field.options} disabled={sectionButtons} />}
+          {field.type === "datePicker" && <DatePicker disabled={sectionButtons && !isEditing} />}
+          {field.type === "radio" && <Radio.Group options={field.options} disabled={sectionButtons && !isEditing} />}
           {field.type === "select" && (
-            <Select disabled={sectionButtons}>
+            <Select disabled={sectionButtons && !isEditing}>
               {field.options?.map((option: any, i: any) => (
                 <Select.Option key={i} value={option.value}>
                   {option.label}
