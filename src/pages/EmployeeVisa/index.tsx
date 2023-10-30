@@ -10,7 +10,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import StatusTag from "../../components/StatusTag";
 
 import { getStatus } from "../../services/auth";
-import {getDocument} from "../../services/document";
+import {previewDocument} from "../SharedModules";
 
 
 
@@ -43,16 +43,7 @@ const VisaStatusManagement = () => {
     fetchStatus();
   }, [dispatch,user]);
   
-  const previewDocument = async (docId: string) => {
-    const document = await getDocument(docId);
-    console.log("Received response:", document);
-    if (document.size > 0) {
-      const url = URL.createObjectURL(document);
-      window.open(url, "_blank");
-    } else {
-      console.log("Received empty document");
-    }
-  };
+
 
   const handleFileSubmit = async (info: any) => {
     const { status, response } = info.file;

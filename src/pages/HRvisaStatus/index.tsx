@@ -4,8 +4,9 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Modal } from "antd";
 import dayjs from "dayjs";
-import {  updateEmpolyeeStatus, sendNotification, getEmployeesStatusOngoing } from "../../services/HR"; // replace with your actual API calls
+import { updateEmpolyeeStatus, sendNotification, getEmployeesStatusOngoing } from "../../services/HR"; // replace with your actual API calls
 import {getDocument} from "../../services/document";
+import {previewDocument} from "../SharedModules";
 // Interfaces
 interface WorkAuth {
   type: string;
@@ -35,6 +36,13 @@ interface Employee {
   email?: string;
 }
 
+const VisaStatusNextSteps = {
+  "optReceipt": "optEad",
+  "optEad": "i983",
+  "i983": "i20",
+  "i20": "approved",
+};
+
 const VisaStatusManagementPage: React.FC = () => {
   const [visaStatuses, setVisaStatuses] = useState<Employee[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -54,13 +62,6 @@ const VisaStatusManagementPage: React.FC = () => {
     fetchVisaStatuses();
   }, []);
 
-  const handlePreview = async (docId: string) => {
-    setCurrentDocId(docId);
-    setModalVisible(true);
-    const document = await getDocument(docId);
-    // Display the document in a modal
-  };
-
   const handleApproveReject = async (employee: Employee, decision: string) => {
     await updateEmpolyeeStatus({
       id: employee.id,
@@ -75,11 +76,7 @@ const VisaStatusManagementPage: React.FC = () => {
     // Handle UI updates or notifications
   };
 
-  const previewDocument = async (docId: string) => {
-    const document = await getDocument(docId);
-    // Show the document in a modal
-    setModalVisible(true);
-  };
+
 
   const columns = [
     {
@@ -98,7 +95,7 @@ const VisaStatusManagementPage: React.FC = () => {
         {
           title: "Start/End date",
           render: (_: any, record: Employee) => (
-            `${dayjs(record.workAuth.StartDate).format("YYYY-MM-DD")} - ${dayjs(record.workAuth.EndDate).format("YYYY-MM-DD")}`
+            `${dayjs(record.workAuth.StartDate).format("YYYY-MM-DD")} To ${dayjs(record.workAuth.EndDate).format("YYYY-MM-DD")}`
           ),
           key: "dates",
         },
@@ -113,9 +110,36 @@ const VisaStatusManagementPage: React.FC = () => {
     },
     {
       title: "Next Steps",
-      dataIndex: ["visaStatus", "status"],
       key: "nextSteps",
+      render: (_: any, record: any) => {
+        const currentStatusKey = record.visaStatus.status;
+        const currentStatus = record.visaStatus[currentStatusKey as keyof typeof record.visaStatus];
+        if (currentStatus?.status === "pending") {
+          return (
+            <>
+              {currentStatusKey} pending, need review
+            </>
+          );
+        } else if (currentStatus?.status === "approved") {
+          const nextStep = VisaStatusNextSteps[currentStatusKey as keyof typeof VisaStatusNextSteps];
+          return (
+            <>
+              {currentStatusKey} approved, waiting for {nextStep} upload
+            </>
+          );
+        } else if (currentStatus?.status === "rejected") {
+          return (
+            <>
+              {currentStatusKey} rejected, waiting for upload
+            </>
+          );
+        } else if(record.visaStatus === "approved") {
+          return (<>All approved</>) ;
+        }
+        return (<>Not upload any file</>) ;
+      }
     },
+
     {
       title: "Action",
       key: "action",
@@ -124,9 +148,8 @@ const VisaStatusManagementPage: React.FC = () => {
         if (currentStatus?.status === "pending") {
           return (
             <>
-              <Button onClick={() => previewDocument(record.visaStatus.optReceipt.docId)}>Preview Document</Button>
-              <Button onClick={() => handlePreview(currentStatus.docId)}>Preview</Button>
-              <Button onClick={() => handleApproveReject(record, "approved")}>Approve</Button>
+              <Button onClick={() => previewDocument(currentStatus.docId)}>Preview</Button>
+              <Button color='green' onClick={() => handleApproveReject(record, "approved")}>Approve</Button>
               <Button onClick={() => handleApproveReject(record, "rejected")}>Reject</Button>
             </>
           );
