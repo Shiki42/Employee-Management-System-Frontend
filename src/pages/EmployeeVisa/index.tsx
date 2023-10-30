@@ -19,7 +19,7 @@ const VisaStatusManagement = () => {
   const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  //const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [visaStatus, setVisaStatus] = useState<any>({});
   const [currentDocId, setCurrentDocId] = useState<string | null>(null);
@@ -45,8 +45,13 @@ const VisaStatusManagement = () => {
   
   const previewDocument = async (docId: string) => {
     const document = await getDocument(docId);
-    // Show the document in a modal
-    setIsModalOpen(true);
+    console.log("Received response:", document);
+    if (document.size > 0) {
+      const url = URL.createObjectURL(document);
+      window.open(url, "_blank");
+    } else {
+      console.log("Received empty document");
+    }
   };
 
   const handleFileSubmit = async (info: any) => {
@@ -78,14 +83,14 @@ const VisaStatusManagement = () => {
 
   return (
     <div>
-      <Modal visible={isModalOpen} onCancel={() => setIsModalOpen(false)}>
-        {/* Your PDF preview logic here based on currentDocId */}
-      </Modal>
+      {/* <Modal visible={isModalOpen} onCancel={() => setIsModalOpen(false)}>
+      </Modal> */}
       <h1>Visa Status Management</h1>
 
       <h2>OPT Receipt</h2>
       <StatusTag status={visaStatus.optReceipt?.status} />
       <p>{visaStatus.optReceipt?.status === "pending" && "Waiting for HR to approve your OPT Receipt."}</p>
+      {visaStatus.optReceipt?.docId && <Button onClick={() => previewDocument(visaStatus.optReceipt?.docId)}>Preview Document</Button>}
       {visaStatus.optReceipt?.status !== "approved"  &&<Form.Item label="OPT Receipt" name={["visaStatus", "optReceipt"]}>
         <Upload
           disabled={false}
@@ -104,6 +109,7 @@ const VisaStatusManagement = () => {
       <h2>OPT EAD</h2>
       <StatusTag status={visaStatus.optEad?.status} />
       <p>{visaStatus.optEad?.status === "pending" && "Waiting for HR to approve your OPT EAD."}</p>
+      {visaStatus.optEad?.docId && <Button onClick={() => previewDocument(visaStatus.optEad?.docId)}>Preview Document</Button>}
       {(visaStatus.optReceipt?.status === "approved" && visaStatus.optEad?.status !== "approved") && <Form.Item label="OPT EAD" name={["visaStatus", "optEad"]}>
         <Upload
           disabled={visaStatus.optReceipt?.status !== "approved"}
@@ -122,6 +128,7 @@ const VisaStatusManagement = () => {
       <h2>I-983</h2>
       <StatusTag status={visaStatus.i983?.status} />
       <p>{visaStatus.i983?.status === "pending" && "Waiting for HR to approve and sign your I-983."}</p>
+      {visaStatus.i983?.docId && <Button onClick={() => previewDocument(visaStatus.i983?.docId)}>Preview Document</Button>}
       {visaStatus.optEad?.status === "approved" &&<Form.Item label="I-983" name={["visaStatus", "i983"]}>
         <Upload
           disabled={visaStatus.optEad?.status !== "approved"}
@@ -140,7 +147,8 @@ const VisaStatusManagement = () => {
       <h2>I-20</h2>
       <StatusTag status={visaStatus.i20?.status} />
       <p>{visaStatus.i20?.status === "pending" && "Waiting for HR to approve your I-20."}</p>
-      <Form.Item label="I-20" name={["visaStatus", "i20"]}>
+      {visaStatus.i20?.docId && <Button onClick={() => previewDocument(visaStatus.i20?.docId)}>Preview Document</Button>}
+      {visaStatus.i983?.status === "approved" &&<Form.Item label="I-20" name={["visaStatus", "i20"]}>
         <Upload
           disabled={visaStatus.i983?.status !== "approved"}
           action="http://localhost:3050/api/document"
@@ -153,7 +161,7 @@ const VisaStatusManagement = () => {
         >
           <Button icon={<UploadOutlined />}>Click to Upload</Button>
         </Upload>
-      </Form.Item>
+      </Form.Item>}
     </div>
   );
 };

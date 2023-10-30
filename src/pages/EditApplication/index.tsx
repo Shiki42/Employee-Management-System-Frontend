@@ -84,8 +84,10 @@ const EditApplication: React.FC = () => {
   }, [formData,citizenshipStatus,visaStatus]);
 
   const onFinish = async (values: any) => {
+    console.log("user.applicationId",user.applicationId);
+    console.log(user.applicationId === null);
     try {
-      if(user.application === null) {
+      if(user.applicationId === null) {
         const response = await createApplication({...values,username:user.name});
         dispatch(setCurrentUser({ applicationId: response._id, applicationStatus: response.status}));
         message.success("Application successfully created.");
@@ -165,17 +167,15 @@ const EditApplication: React.FC = () => {
         
             {visaStatus === "F1(CPT/OPT)" && ( <Form.Item
               label="optReceipt"
-              name={["visaStatus", "optReceipt"]}
-              // fix this later
-              // rules={[{ required: true, message: "Please upload your optReceipt!" }]}
-              rules={[{  message: "Please upload your optReceipt!" }]}
+              name={["visaStatus", "optReceipt","docId"]}
+              rules={formDisabled ? [] :[{ required: true, message: "Please upload your optReceipt!" }]}
             ><Upload
                 action="http://localhost:3050/api/document"
                 data={{
                   username: user.name,
                   type: "optReceipt",
                 }}
-                onChange={handleFileSubmit}
+                onChange={(info)=>handleFileSubmit(info, form, ["visaStatus", "optReceipt"])}
                 maxCount={1}
               >
                 <Button icon={<UploadOutlined />}>Click to Upload</Button>

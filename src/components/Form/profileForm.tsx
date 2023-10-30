@@ -52,7 +52,9 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields, sectionName, o
           rules={field.rules}
           // initialValue={field.initialValue}
         >
-          {field.type === "text" && <Input disabled={sectionButtons && !isEditing} />}
+          {field.name === "email" ? (field.type === "text" && 
+          <Input disabled={true} />) :
+            (field.type === "text" && <Input disabled={sectionButtons && !isEditing} />)}
           {field.type === "upload" && (
             <Upload
               action="http://localhost:3050/api/document"
@@ -60,7 +62,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ fields, sectionName, o
                 username: user.name,
                 type: field.name,
               }}
-              onChange={handleFileSubmit}
+              onChange={(info) => handleFileSubmit(info, form, field.name)}
               maxCount={1}
               disabled={sectionButtons && !isEditing}
             >
