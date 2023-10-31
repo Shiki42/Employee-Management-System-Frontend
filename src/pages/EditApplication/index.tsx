@@ -28,6 +28,7 @@ const EditApplication: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formDisabled, setFormDisabled] = useState<boolean>(false);
 
+  const [isOptReceiptUploaded, setOptReceiptUploaded] = useState(false);
   const [citizenshipStatus, setCitizenshipStatus] = useState<string | null>(null);
   const [visaStatus, setvisaStatus] = useState<string | null>(null);
 
@@ -107,7 +108,8 @@ const EditApplication: React.FC = () => {
 
   return (      
     <>
-      {user.applicationStatus?<StatusTag status={user.applicationStatus} />:null}           
+      {user.applicationStatus?<StatusTag status={user.applicationStatus} />:null}
+      {formData?.feedback?<>feedback: {formData?.feedback}</>:null}           
       <Form
         form={form}
         name="profilePage"
@@ -160,27 +162,46 @@ const EditApplication: React.FC = () => {
             <Form.Item
               label="workAuth End Date"
               name={["workAuth", "EndDate"]}
-              rules={[{ required: true, message: "Please select your workAuth End Date!" }]}
+              rules={[
+                { 
+                  required: true, 
+                  message: "Please select your workAuth End Date!" 
+                },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || !getFieldValue(["workAuth", "StartDate"])) {
+                      return Promise.resolve();
+                    }
+                    if (getFieldValue(["workAuth", "StartDate"]).isBefore(value)) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error("End Date must be later than Start Date!"));
+                  },
+                }),
+              ]}
             >
               <DatePicker />
             </Form.Item>
-        
-            {visaStatus === "F1(CPT/OPT)" && ( <Form.Item
-              label="optReceipt"
-              name={["visaStatus", "optReceipt","docId"]}
-              rules={formDisabled ? [] :[{ required: true, message: "Please upload your optReceipt!" }]}
-            ><Upload
-                action="http://localhost:3050/api/document"
-                data={{
-                  username: user.name,
-                  type: "optReceipt",
-                }}
-                onChange={(info)=>handleFileSubmit(info, form, ["visaStatus", "optReceipt"])}
-                maxCount={1}
-              >
-                <Button icon={<UploadOutlined />}>Click to Upload</Button>
-              </Upload>
-            </Form.Item> )}
+
+            {(user.visaStatus.optReceipt.status !== "pending" && user.visaStatus.optReceipt.status !== "approved" 
+            && !isOptReceiptUploaded)?
+              (visaStatus === "F1(CPT/OPT)" && ( <Form.Item
+                label="optReceipt"
+                name={["visaStatus", "optReceipt","docId"]}
+                rules={formDisabled ? [] :[{ required: true, message: "Please upload your optReceipt!" }]}
+              ><Upload
+                  action="http://localhost:3050/api/document"
+                  data={{
+                    username: user.name,
+                    type: "optReceipt",
+                  }}
+                  onChange={(info)=>handleFileSubmit(info, form, ["visaStatus", "optReceipt"],setOptReceiptUploaded)}
+                  maxCount={1}
+                >
+                  <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                </Upload>
+              </Form.Item> )) :<Form.Item> <>optReceipt uploaded</></Form.Item>
+            }
 
             {visaStatus === "Other" && ( <Form.Item
               label="Other Visa Type"

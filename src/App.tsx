@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useSelector, useDispatch} from "react-redux";
 import { RootState } from "./app/store";
 import { setCurrentUser } from "./app/userSlice";
@@ -17,7 +18,8 @@ import VisaStatusManagement from "./pages/EmployeeVisa";
 import HRProfilesOverview from "./pages/HRProfilesOverview";
 import HRProfile from "./pages/HRProfile";
 import HRVisaStatusManagement from "./pages/HRvisaStatus";
-
+import HRhiringManagement from "./pages/HRhiringManagement";
+//import HRapplicationView from "./pages/HRapplicationView";
 import NotFound from "./pages/NotFound";
 import LoginFirst from "./pages/LoginFirst";
 import "./App.css";
@@ -59,17 +61,17 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout/>}>
             <Route index element={<SignIn />} />
-            <Route path="register" element={<SignUp />} />
+            <Route path="/register" element={<SignUp />} />
             <Route path="*" element={<LoginFirst />} />
           </Route>
         </Routes>
       ) : user.role === "employee" ? (
         <Routes>
           <Route path="/" element={<MainLayout/>}>
-            <Route index element={<ProfilePage />} />
-            <Route path="application" element={<EditApplication />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="visa-status" element={<VisaStatusManagement />} />
+            <Route index element={<EditApplication />} />
+            <Route path="/application" element={<EditApplication />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/visa-status" element={<VisaStatusManagement />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
@@ -79,33 +81,25 @@ function App() {
             <Route path="/" element={<MainLayout/>}>
               <Route index element={<HRProfilesOverview />} />
               <Route path="/user/:id/profile" element={<HRProfile />} />
+              <Route path="/user/:id/application" element={<HRProfile />} />
+              <Route path="/hiringManagement" element={<HRhiringManagement />} />
               <Route path="/visaStatus" element={<HRVisaStatusManagement />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
         )
       )}
-      <ConditionalNavigate />
+      {/* <ConditionalNavigate /> */}
     </BrowserRouter>
   );
 }
 
-function ConditionalNavigate() {
-  const navigate = useNavigate();
-  const user = useSelector((state: RootState) => state.user);
+// function ConditionalNavigate() {
+//   const navigate = useNavigate();
+//   const user = useSelector((state: RootState) => state.user);
 
-  useEffect(() => {
-    if (user.isAuthenticated && user.role === "employee") {
-      if (user.applicationStatus !== "approved") {
-        navigate("/application");
-      }
-      // } else {
-      //   navigate('/profile');
-      // }
-    }
-  }, [user, navigate]);
 
-  return null;
-}
+//   return null;
+// }
 
 export default App;

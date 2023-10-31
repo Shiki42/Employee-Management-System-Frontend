@@ -7,7 +7,7 @@ import { signUpUser } from "../../app/userSlice";
 import { AppDispatch } from "../../app/store";
 import { message, Form } from "antd";
 import { useEffect, useState } from "react";
-
+import { useSelector } from "react-redux";
 const fields = [
   {
     placeholder: "Name",
@@ -63,6 +63,7 @@ const containerStyle:React.CSSProperties = {
 };
 
 export default function SignUp() {
+  const user = useSelector((state: any) => state.user);
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const dispatch: AppDispatch = useDispatch();
@@ -70,6 +71,14 @@ export default function SignUp() {
   const email = urlParams.get("email") || "";
   fields[1].initialValue = email;
   console.log(fields);
+
+  useEffect(() => {
+    if (user.authenticated) {
+      message.error("You already logged in.");
+      navigate("/");
+    }
+  }, [user, navigate]);
+
   const onSubmit = (data:any) => {
     
     const token = urlParams.get("token");
@@ -77,6 +86,7 @@ export default function SignUp() {
     if (token) {
       data.token = token;
     }
+    console.log("signup data", data);
     try{
       dispatch(signUpUser(data)).then((response) => {
         if (response.payload.email) {
@@ -84,15 +94,12 @@ export default function SignUp() {
           navigate("/signin");
         } else if (response.payload.message) {
           message.error("Invalid token.");
-          navigate("/");
         } else {
           message.error("Something went wrong.");
-          navigate("/");
         }
       });
     } catch (error:any) {
       message.error(error.message);
-      navigate("/");
     }
   };
   return (

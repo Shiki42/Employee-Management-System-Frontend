@@ -62,7 +62,8 @@ const currentUserSlice = createSlice({
     setCurrentUser: (state, action) => {
       const {name, email, role, applicationId, applicationStatus,  token, visaStatus, workAuth} = action.payload;
       state.isAuthenticated = true;
-
+      console.log(name, email, role, applicationId, applicationStatus,  token, visaStatus, workAuth);
+      console.log(name==undefined, email!=undefined, role!=undefined, applicationId, applicationStatus,  token, visaStatus, workAuth);
       if(name!=undefined) {
         state.name  = name;
       }
@@ -87,6 +88,7 @@ const currentUserSlice = createSlice({
       if(workAuth!=undefined) {
         state.workAuth = workAuth;
       }
+      console.log("state", state);
       localStorage.setItem("user", JSON.stringify(action.payload));
     },
     logOutUser: (state, action) => {

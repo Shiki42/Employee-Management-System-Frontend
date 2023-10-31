@@ -2,9 +2,10 @@
 /* eslint-disable no-inner-declarations */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
-import { Table, Button, Modal } from "antd";
+import { Table, Button, Modal, message } from "antd";
 import dayjs from "dayjs";
-import { updateEmpolyeeStatus, sendNotification, getEmployeesStatusOngoing } from "../../services/HR"; // replace with your actual API calls
+import { updateEmpolyeeStatus, sendNotification, getEmployeesStatusOngoing
+  , getAllEmployeesStatus } from "../../services/HR"; 
 import {getDocument} from "../../services/document";
 import {previewDocument} from "../SharedModules";
 // Interfaces
@@ -48,19 +49,28 @@ const VisaStatusManagementPage: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentDocId, setCurrentDocId] = useState<string | null>(null);
 
+  const [currentMode, setCurrentMode] = useState<"ongoing" | "all">("ongoing");
+
+  const toggleMode = () => {
+    setCurrentMode(currentMode === "ongoing" ? "all" : "ongoing");
+  };
+  
   useEffect(() => {
     async function fetchVisaStatuses() {
+      let response;
       try {
-        // Replace getEmployeesStatusOngoing with your actual API call
-        const response = await getEmployeesStatusOngoing();
-        console.log("response",response);
+        if (currentMode === "ongoing") {
+          response = await getEmployeesStatusOngoing();
+        } else {
+          response = await getAllEmployeesStatus();
+        }
         setVisaStatuses(response.visaStatuses);
       } catch (error) {
         console.log(error);
       }
     }
     fetchVisaStatuses();
-  }, []);
+  }, [currentMode]);
 
   const handleApproveReject = async (employee: Employee, decision: string) => {
     await updateEmpolyeeStatus({
@@ -72,13 +82,17 @@ const VisaStatusManagementPage: React.FC = () => {
   };
 
   const handleSendNotification = async (email: string) => {
-    await sendNotification(email);
+    try {
+      await sendNotification(email);
+      message.success("Notification sent!");
+    } catch (error) {
+      message.error("Failed to send notification!");
+    }
+    
     // Handle UI updates or notifications
   };
 
-
-
-  const columns = [
+  const ongoing_columns = [
     {
       title: "Name",
       dataIndex: "name",
@@ -114,7 +128,13 @@ const VisaStatusManagementPage: React.FC = () => {
       render: (_: any, record: any) => {
         const currentStatusKey = record.visaStatus.status;
         const currentStatus = record.visaStatus[currentStatusKey as keyof typeof record.visaStatus];
-        if (currentStatus?.status === "pending") {
+        console.log(currentStatusKey,"currentStatus",currentStatus,currentStatus?.status);
+        if(currentStatus?.status.trim().replace(/\s+/g, " ") === "need to upload".trim().replace(/\s+/g, " ")) {
+          return (
+            <>
+              {currentStatusKey} waiting for upload
+            </>);
+        } else if (currentStatus?.status === "pending") {
           return (
             <>
               {currentStatusKey} pending, need review
@@ -144,6 +164,7 @@ const VisaStatusManagementPage: React.FC = () => {
       title: "Action",
       key: "action",
       render: (_: any, record: any) => {
+        console.log("action record",JSON.stringify(record));
         const currentStatus = record.visaStatus[record.visaStatus.status];
         if (currentStatus?.status === "pending") {
           return (
@@ -163,9 +184,69 @@ const VisaStatusManagementPage: React.FC = () => {
     },
   ];
 
+  const all_columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Work Authorization",
+      children: [
+        {
+          title: "Title",
+          dataIndex: ["workAuth", "type"],
+          key: "title",
+        },
+        {
+          title: "Start/End date",
+          render: (_: any, record: Employee) => (
+            `${dayjs(record.workAuth.StartDate).format("YYYY-MM-DD")} To ${dayjs(record.workAuth.EndDate).format("YYYY-MM-DD")}`
+          ),
+          key: "dates",
+        },
+        {
+          title: "Days Remaining",
+          render: (_: any, record: Employee) => (
+            dayjs(record.workAuth.EndDate).diff(dayjs(), "day")
+          ),
+          key: "remainingDays",
+        },
+      ],
+    },
+    {
+      title: "Preview",
+      key: "preview",
+      render: (_: any, record: any) => {
+        // Logic to display preview buttons based on approved docIds
+        const approvedDocs = Object.entries(record.visaStatus)
+          .filter(([_, val]) => val?.status === "approved")
+          .map(([key, val]) => ({
+            name: key,
+            docId: val?.docId,
+          }));
+        return (
+          <>
+            {approvedDocs.map((doc, index) => (
+              <Button key={index} onClick={() => previewDocument(doc.docId)}>
+                Preview {doc.name}
+              </Button>
+            ))}
+          </>
+        );
+      },
+    },
+
+  ];
+
   return (
     <div>
-      <Table dataSource={visaStatuses} columns={columns} rowKey="id" />
+      <Button onClick={toggleMode}>Ongoing / All</Button>
+      <Table
+        dataSource={visaStatuses}
+        columns={currentMode === "ongoing" ? ongoing_columns : all_columns}
+        rowKey="id"
+      />
       <Modal visible={modalVisible} onCancel={() => setModalVisible(false)}>
         {/* Your PDF preview logic here based on currentDocId */}
       </Modal>

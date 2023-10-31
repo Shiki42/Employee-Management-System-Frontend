@@ -4,8 +4,9 @@
 import { useState, useEffect } from "react";
 
 import { useNavigate } from "react-router-dom";
-
 import { useSelector, useDispatch } from "react-redux";
+
+import { Table } from "antd";
 
 import { getEmployeeProfiles } from "../../services/HR";
 
@@ -36,25 +37,46 @@ export default function HRProfilesManagement () {
   },[]);
 
 
-  if (isLoading) return (<div>Loading...</div>);
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      render: (name: any) => `${name.firstName} ${name.lastName}`,
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Phone",
+      dataIndex: "phoneNumber",
+      key: "phone",
+    },
+    {
+      title: "SSN",
+      dataIndex: "SSN",
+      key: "SSN",
+    },
+    {
+      title: "Work Authorization",
+      dataIndex: "workAuth",
+      key: "workAuth",
+      render: (workAuth: any) => workAuth.type,
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (text: any, record: any) => (
+        <a onClick={() => navigate(`/user/${record.creator}/profile`)}>View Profile</a>
+      ),
+    },
+  ];
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
-    <div>
-      <>
-        {/* {JSON.stringify(profiles)} */}
-      </>
-      { profiles.map((profile:any,index:number) => 
-        (
-          <div key={index}>
-            <div onClick={()=>{navigate(`/user/${profile.creator}/profile`);}}>Name:{profile.name.firstName + " " + profile.name.lastName}</div>
-                
-                Email:{profile.email}
-                Phone:{profile.phone}
-                SSN:{profile.SSN}
-                Work Authorization Title:{profile.workAuth.type}
-          </div>
-        )
-      )}
-    </div>
+    <Table dataSource={profiles} columns={columns} rowKey="creator" />
   );
 }

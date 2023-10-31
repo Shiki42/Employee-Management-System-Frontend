@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {setCurrentUser} from "../../app/userSlice";
 
@@ -18,7 +18,7 @@ import {previewDocument} from "../SharedModules";
 const VisaStatusManagement = () => {
   const user = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   //const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [visaStatus, setVisaStatus] = useState<any>({});
@@ -36,6 +36,7 @@ const VisaStatusManagement = () => {
           }
         }  
       } catch (e) {
+        navigate("/error");
         console.error(e);
       }
       

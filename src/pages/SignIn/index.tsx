@@ -1,47 +1,60 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-extra-boolean-cast */
-
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../app/store";
 import AuthForm from "../../components/Form/authForm";
 import { authUser } from "../../app/userSlice";
 import { message } from "antd";
+
+const fields = [
+  {
+    placeholder: "Name",
+    name: "name",
+    type: "text",
+    rules: [
+      { required: true, message: "Please input your Name!" },
+    ]
+  },
+  {
+    placeholder: "Password",
+    name: "password",
+    type: "password",
+    rules: [
+      { required: true, message: "Please input your Password!" },
+      { 
+        min: 6, 
+        message: "Password must be at least 6 characters!",
+      },
+      { 
+        pattern: /[A-Za-z]/, 
+        message: "Password must contain at least 1 letter!",
+      },
+      { 
+        pattern: /[0-9]/, 
+        message: "Password must contain at least 1 number!",
+      },
+    ]
+  }
+];
+
 export default function SignIn() {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const fields = [
-    {
-      placeholder: "Name",
-      name: "name",
-      type: "text",
-      rules: [
-        { required: true, message: "Please input your Name!" },
-      ]
-    },
-    {
-      placeholder: "Password",
-      name: "password",
-      type: "password",
-      rules: [
-        { required: true, message: "Please input your Password!" },
-        { 
-          min: 6, 
-          message: "Password must be at least 6 characters!",
-        },
-        { 
-          pattern: /[A-Za-z]/, 
-          message: "Password must contain at least 1 letter!",
-        },
-        { 
-          pattern: /[0-9]/, 
-          message: "Password must contain at least 1 number!",
-        },
-      ]
+  const user = useSelector((state: any) => state.user);
+
+  useEffect(() => {
+    if (user.authenticated) {
+      message.error("You already logged in.");
+      navigate("/");
     }
-  ];
+  }, [user, navigate]);
+
 
   const containerStyle:React.CSSProperties = {
     display: "flex",

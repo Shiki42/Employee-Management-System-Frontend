@@ -7,7 +7,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
-import { Form, FormInstance, message } from "antd";
+import { Button, Form, FormInstance, Modal, Input, Space, message } from "antd";
+import { UploadOutlined, MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { ProfileForm } from "../../components/Form/profileForm"; 
 import { Field } from "../../interfaces/FormField.interface";
 import { nameFields,addressFields,contactFields,employmentFields,emergencyContactFields } from "../../components/Form/profileSharedModules";
@@ -24,6 +25,14 @@ const ProfilePage: React.FC = () => {
   const [fileId, setFileId] = useState<any>(null);
   const [formData, setFormData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isEmergencyEditing, setIsEmergencyEditing] = useState(false);
+
+  useEffect(() => {
+    if (currentUser.applicationStatus !== "approved") {
+      navigate("/application");
+    }
+  }, [currentUser, navigate]);
+
 
   useEffect(() => {
     form.setFieldsValue({ email: currentUser.email});
@@ -66,6 +75,25 @@ const ProfilePage: React.FC = () => {
   }, [formData]);
   
   
+  const toggleEmergencyEditing = () => {
+    if (isEmergencyEditing) {
+      Modal.confirm({
+        title: "Discard changes?",
+        content: "Do you want to discard all of your changes?",
+        onOk: () => setIsEmergencyEditing(false),
+      });
+    } else {
+      setIsEmergencyEditing(true);
+    }
+  };
+
+  const saveEmergencyChanges = () => {
+    const emergencyValues = form.getFieldValue("emergencyContacts");
+    // Here you can make API calls to save data
+    console.log("Emergency Contacts: ", emergencyValues);
+    setIsEmergencyEditing(false);
+  };
+
   const onFinish = async (values: any) => {
     try {
       //values.profilePicture = fileId;
@@ -93,8 +121,56 @@ const ProfilePage: React.FC = () => {
       <ProfileForm fields={addressFields}  onFinish={onFinish} form={form} sectionButtons={true} sectionName="Address" />
       <ProfileForm fields={contactFields}  onFinish={onFinish} form={form} sectionButtons={true} sectionName="Contact Info" />
       <ProfileForm fields={employmentFields}  onFinish={onFinish} form={form} sectionButtons={true} sectionName="Employment" />
-      <ProfileForm fields={emergencyContactFields}  onFinish={onFinish} form={form} sectionButtons={true} sectionName="Emergency Contact" />
-      {/* <ProfileForm fields={groupFieldsBySection('documents')} form={form} sectionName="Documents" /> */}
+      <Form.List name="emergencyContacts">
+        {(fields, { add, remove }) => (
+          <>
+            {fields.map(({ key, name, fieldKey, ...restField }) => (
+              <Space key={key} style={{ display: "flex", marginBottom: 8 }} align="baseline">
+                {/* Add disabled={!isEmergencyEditing} to the Input components to disable them when not editing */}
+                <Form.Item
+                  {...restField}
+                  name={[name, "name", "firstName"]}
+                  fieldKey={fieldKey ? [fieldKey.toString(), "firstName"] : undefined}
+                  rules={[{ required: true, message: "Missing first name" }]}
+                >
+                  <Input placeholder="First Name" disabled={!isEmergencyEditing} />
+                </Form.Item>
+                {/* ... other form items ... */}
+                
+                <Form.Item
+                  {...restField}
+                  name={[name, "name", "lastName"]}
+                  fieldKey={fieldKey ? [fieldKey.toString(), "firstName"] : undefined}
+                  rules={[{ required: true, message: "Missing last name" }]}
+                >
+                  <Input placeholder="Last Name" disabled={!isEmergencyEditing} />
+                </Form.Item>
+                <Form.Item
+                  {...restField}
+                  name={[name, "relationship"]}
+                  fieldKey={fieldKey ? [fieldKey.toString(), "firstName"] : undefined}
+                  rules={[{ required: true, message: "Missing relationship" }]}
+                >
+                  <Input placeholder="Relationship" disabled={!isEmergencyEditing} />
+                </Form.Item>
+                <MinusCircleOutlined onClick={() => remove(name)} />
+              </Space>
+            ))}
+            <Form.Item>
+              <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />} disabled={!isEmergencyEditing}>
+          Add Emergency Contact
+              </Button>
+            </Form.Item>
+            {/* Edit/Save/Cancel Buttons */}
+            {isEmergencyEditing ? (
+              <Button onClick={toggleEmergencyEditing}>Cancel</Button>
+            ) : (
+              <Button onClick={toggleEmergencyEditing}>Edit</Button>
+            )}
+            {isEmergencyEditing && <Button onClick={saveEmergencyChanges}>Save</Button>}
+          </>
+        )}
+      </Form.List>
 
       <Form.Item>
         <button type="submit">Save All</button>

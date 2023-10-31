@@ -4,7 +4,7 @@ import { Field } from "../../interfaces/FormField.interface";
 
 import { message } from "antd";
 
-export const handleFileSubmit = async (info: any, form: any, fieldName:any) => {
+export const handleFileSubmit = async (info: any, form: any, fieldName:any, setUploaded?:any) => {
   const { status, response } = info.file;
 
   if (status === "uploading") {
@@ -12,6 +12,7 @@ export const handleFileSubmit = async (info: any, form: any, fieldName:any) => {
   }
   if (status === "done") {
     if (response && response.documentId ) {
+      if(setUploaded) setUploaded(true);
       if (Array.isArray(fieldName)) {
         // If fieldName is an array, build the nested object
         let fieldObj = { [fieldName.pop() as string]: response.documentId };

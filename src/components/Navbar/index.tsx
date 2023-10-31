@@ -53,7 +53,7 @@ const Navbar = () => {
       <Menu.Item onClick={() => navigate("/visaStatus")}>
         Visa Status Management
       </Menu.Item>
-      <Menu.Item onClick={() => navigate("/hiring-management")}>
+      <Menu.Item onClick={() => navigate("/hiringManagement")}>
         Hiring Management
       </Menu.Item>
       <Menu.Item onClick={() => {handleLogout();}}>
