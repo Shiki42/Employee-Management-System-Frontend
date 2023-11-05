@@ -1,9 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Form, Table, Button, Modal, Input, message, Tooltip, notification } from "antd";
+import {
+  Form,
+  Table,
+  Button,
+  Modal,
+  Input,
+  message,
+  Tooltip,
+  notification,
+} from "antd";
 
-import { getAlltokens,getApplications, updateApplicationStatus } from "../../services/HR"; // replace with your actual API calls
+import {
+  getAlltokens,
+  getApplications,
+  updateApplicationStatus,
+} from "../../services/HR"; // replace with your actual API calls
 import { invite } from "../../services/auth";
 import { useNavigate } from "react-router";
 const token_columns = [
@@ -23,16 +36,18 @@ const token_columns = [
     key: "link",
     render: (text: string) => (
       <Tooltip title={text}>
-        <div style={{ 
-          textOverflow: "ellipsis", 
-          overflow: "hidden", 
-          whiteSpace: "nowrap", 
-          maxWidth: "100px" // adjust based on your needs
-        }}>
+        <div
+          style={{
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+            whiteSpace: "nowrap",
+            maxWidth: "100px", // adjust based on your needs
+          }}
+        >
           {text}
         </div>
       </Tooltip>
-    )
+    ),
   },
   {
     title: "Status",
@@ -41,8 +56,7 @@ const token_columns = [
   },
 ];
 
-export default function HRhiringManagement () {
-
+export default function HRhiringManagement() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [tokenHistory, setTokenHistory] = useState([]);
@@ -54,7 +68,7 @@ export default function HRhiringManagement () {
   useEffect(() => {
     const fetchData = async () => {
       const result = await getAlltokens();
-      console.log("result",result);
+      console.log("result", result);
       setTokenHistory(result.tokens); // assuming result.data contains the token history
     };
 
@@ -93,13 +107,13 @@ export default function HRhiringManagement () {
       navigate("/error");
     }
   };
-  
+
   useEffect(() => {
     async function fetchApplications() {
       try {
         // Replace getEmployeesStatusOngoing with your actual API call
         const response = await getApplications();
-        console.log("response",response);
+        console.log("response", response);
         setApplications(response.applications);
       } catch (error) {
         console.log(error);
@@ -108,21 +122,24 @@ export default function HRhiringManagement () {
     }
     fetchApplications();
   }, []);
-    
+
   const handleApproveReject = async (id: string, status: string) => {
     if (status === "rejected") {
       setModalVisible(true);
       setCurrentApplicationId(id);
       return;
     }
-  
+
     if (status === "approved") {
       await updateStatus(id, status);
     }
   };
-    
 
-  const updateStatus = async (id: string, status: string, feedback: string = "") => {
+  const updateStatus = async (
+    id: string,
+    status: string,
+    feedback: string = ""
+  ) => {
     try {
       const reponse = await updateApplicationStatus({ id, status, feedback });
       const newApplications = applications.map((application) => {
@@ -147,7 +164,7 @@ export default function HRhiringManagement () {
     setModalVisible(false);
     setFeedback(""); // Reset feedback
   };
-  
+
   const viewApplication = (id: string) => {
     const url = `/user/${id}/application`;
     window.open(url, "_blank");
@@ -184,25 +201,35 @@ export default function HRhiringManagement () {
         {
           text: "Rejected",
           value: "rejected",
-        }],
-      onFilter: (value: string, record:any) => record.status === value,
+        },
+      ],
+      onFilter: (value: any, record: any) => record.status === value,
     },
 
     {
       title: "Action",
       key: "action",
       render: (_: any, record: any) => {
-        
         if (record.status === "pending") {
           return (
             <>
-              <Button onClick={() => viewApplication(record.userId)}>View Application</Button>
-              <Button onClick={() => handleApproveReject(record.id, "approved")}>Approve</Button>
-              <Button onClick={() => handleApproveReject(record.id, "rejected")}>Reject</Button>
+              <Button onClick={() => viewApplication(record.userId)}>
+                View Application
+              </Button>
+              <Button
+                onClick={() => handleApproveReject(record.id, "approved")}
+              >
+                Approve
+              </Button>
+              <Button
+                onClick={() => handleApproveReject(record.id, "rejected")}
+              >
+                Reject
+              </Button>
             </>
           );
-        } 
-        return (<>N/A</>);
+        }
+        return <>N/A</>;
       },
     },
   ];
@@ -215,29 +242,39 @@ export default function HRhiringManagement () {
             name="email"
             rules={[
               { required: true, message: "Please input your email!" },
-              { type: "email", message: "The input is not a valid email!" }
+              { type: "email", message: "The input is not a valid email!" },
             ]}
           >
-            <Input 
-              placeholder="Enter email address" 
+            <Input
+              placeholder="Enter email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              style={{ width: "200px" }}  // Adjust the width as needed
+              style={{ width: "200px" }} // Adjust the width as needed
             />
           </Form.Item>
         </Form>
         <Button type="primary" onClick={handleGenerateToken}>
-        Generate token and send email
+          Generate token and send email
         </Button>
-        <Table dataSource={tokenHistory} columns={token_columns} rowKey="token" />
+        <Table
+          dataSource={tokenHistory}
+          columns={token_columns}
+          rowKey="token"
+        />
       </div>
-      <Modal title="Feedback" visible={modalVisible} onOk={handleOk} onCancel={handleCancel}>
-        <Input placeholder="Enter your feedback here" value={feedback} onChange={(e) => setFeedback(e.target.value)} />
+      <Modal
+        title="Feedback"
+        visible={modalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <Input
+          placeholder="Enter your feedback here"
+          value={feedback}
+          onChange={(e) => setFeedback(e.target.value)}
+        />
       </Modal>
       <Table dataSource={applications} columns={columns} rowKey="id" />
-
     </div>
   );
 }
-
-
