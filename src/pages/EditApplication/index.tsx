@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import moment from "moment";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -108,35 +108,68 @@ const EditApplication: React.FC = () => {
     });
   }, [formData, citizenshipStatus, visaStatus]);
 
-  const onFinish = async (values: any) => {
-    console.log("user.applicationId", user.applicationId);
-    console.log(user.applicationId === null);
-    try {
-      if (user.applicationId === null) {
-        const response = await createApplication({
-          ...values,
-          username: user.name,
-        });
-        dispatch(
-          setCurrentUser({
-            applicationId: response._id,
-            applicationStatus: response.status,
-          })
-        );
-        message.success("Application successfully created.");
-      } else {
-        const response = await updateApplication({
-          ...values,
-          username: user.name,
-          applicationId: user.applicationId,
-        });
-        dispatch(setCurrentUser({ applicationStatus: response.status }));
-        message.success("Application successfully edited.");
+  const onFinish = useCallback(
+    async (values: any) => {
+      console.log("user.applicationId", user.applicationId);
+      console.log(user.applicationId === null);
+      try {
+        if (user.applicationId === null) {
+          const response = await createApplication({
+            ...values,
+            username: user.name,
+          });
+          dispatch(
+            setCurrentUser({
+              applicationId: response._id,
+              applicationStatus: response.status,
+            })
+          );
+          message.success("Application successfully created.");
+        } else {
+          const response = await updateApplication({
+            ...values,
+            username: user.name,
+            applicationId: user.applicationId,
+          });
+          dispatch(setCurrentUser({ applicationStatus: response.status }));
+          message.success("Application successfully edited.");
+        }
+      } catch (err) {
+        message.error("Error when updating Application");
       }
-    } catch (err) {
-      message.error("Error when updating Application");
-    }
-  };
+    },
+    [user.applicationId, user.name, dispatch]
+  );
+
+  // const onFinish = async (values: any) => {
+  //   console.log("user.applicationId", user.applicationId);
+  //   console.log(user.applicationId === null);
+  //   try {
+  //     if (user.applicationId === null) {
+  //       const response = await createApplication({
+  //         ...values,
+  //         username: user.name,
+  //       });
+  //       dispatch(
+  //         setCurrentUser({
+  //           applicationId: response._id,
+  //           applicationStatus: response.status,
+  //         })
+  //       );
+  //       message.success("Application successfully created.");
+  //     } else {
+  //       const response = await updateApplication({
+  //         ...values,
+  //         username: user.name,
+  //         applicationId: user.applicationId,
+  //       });
+  //       dispatch(setCurrentUser({ applicationStatus: response.status }));
+  //       message.success("Application successfully edited.");
+  //     }
+  //   } catch (err) {
+  //     message.error("Error when updating Application");
+  //   }
+  // };
 
   if (isLoading) {
     return <div>Loading...</div>;
