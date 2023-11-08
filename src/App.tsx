@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useSelector, useDispatch} from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "./app/store";
 import { setCurrentUser } from "./app/userSlice";
 
 import { getStatus } from "./services/auth";
-import { BrowserRouter, Routes, Route, useNavigate  } from "react-router-dom";
-import { useEffect } from "react";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { useEffect, Suspense } from "react";
 
 import MainLayout from "./components/Layout";
 import SignIn from "./pages/SignIn";
@@ -31,18 +31,15 @@ function App() {
     async function fetchStatus() {
       //localStorage.removeItem("user");
       const userString = localStorage.getItem("user");
-      
+
       if (userString) {
         const userData = JSON.parse(userString);
         try {
-          
-          if(userData.token) {
-            const userStatus = await getStatus({token:userData.token});
-            const newUserData = {...userData, ...userStatus};
+          if (userData.token) {
+            const userStatus = await getStatus({ token: userData.token });
+            const newUserData = { ...userData, ...userStatus };
             dispatch(setCurrentUser(newUserData));
           }
-          
-
         } catch (e) {
           console.error("Parsing error:", e);
           dispatch(setCurrentUser(userData));
@@ -56,10 +53,9 @@ function App() {
 
   return (
     <BrowserRouter>
-      
       {!user.isAuthenticated ? (
         <Routes>
-          <Route path="/" element={<MainLayout/>}>
+          <Route path="/" element={<MainLayout />}>
             <Route index element={<SignIn />} />
             <Route path="/register" element={<SignUp />} />
             <Route path="*" element={<LoginFirst />} />
@@ -67,7 +63,7 @@ function App() {
         </Routes>
       ) : user.role === "employee" ? (
         <Routes>
-          <Route path="/" element={<MainLayout/>}>
+          <Route path="/" element={<MainLayout />}>
             <Route index element={<EditApplication />} />
             <Route path="/application" element={<EditApplication />} />
             <Route path="/profile" element={<ProfilePage />} />
@@ -78,11 +74,14 @@ function App() {
       ) : (
         user.role === "HR" && (
           <Routes>
-            <Route path="/" element={<MainLayout/>}>
+            <Route path="/" element={<MainLayout />}>
               <Route index element={<HRProfilesOverview />} />
               <Route path="/user/:id/profile" element={<HRProfile />} />
               <Route path="/user/:id/application" element={<HRProfile />} />
-              <Route path="/hiringManagement" element={<HRhiringManagement />} />
+              <Route
+                path="/hiringManagement"
+                element={<HRhiringManagement />}
+              />
               <Route path="/visaStatus" element={<HRVisaStatusManagement />} />
               <Route path="*" element={<NotFound />} />
             </Route>
@@ -97,7 +96,6 @@ function App() {
 // function ConditionalNavigate() {
 //   const navigate = useNavigate();
 //   const user = useSelector((state: RootState) => state.user);
-
 
 //   return null;
 // }
