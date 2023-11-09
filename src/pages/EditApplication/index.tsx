@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import moment from "moment";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, lazy, Suspense } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -36,7 +36,7 @@ import {
   updateApplication,
 } from "../../services/application";
 
-import StatusTag from "../../components/StatusTag";
+const StatusTag = lazy(() => import("../../components/StatusTag"));
 
 const EditApplication: React.FC = () => {
   const [form] = Form.useForm();
@@ -178,7 +178,9 @@ const EditApplication: React.FC = () => {
   return (
     <>
       {user.applicationStatus ? (
-        <StatusTag status={user.applicationStatus} />
+        <Suspense fallback={<div>Loading...</div>}>
+          <StatusTag status={user.applicationStatus} />
+        </Suspense>
       ) : null}
       {formData?.feedback ? <>feedback: {formData?.feedback}</> : null}
       <Form
