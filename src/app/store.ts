@@ -25,7 +25,7 @@ const store = configureStore({
     user: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(loggerMiddleware as Middleware),
+    getDefaultMiddleware().concat(loggerMiddleware),
   devTools: true,
 });
 
